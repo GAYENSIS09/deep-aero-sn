@@ -1,0 +1,332 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: #0A0A0A;
+  color: #F2F2F2;
+}
+
+::selection {
+  background: #AAFF00;
+  color: #0A0A0A;
+}
+
+.glow {
+  box-shadow: 0 0 60px rgba(170, 255, 0, 0.1);
+}
+
+.glow-sm {
+  box-shadow: 0 0 30px rgba(170, 255, 0, 0.08);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #AAFF00 0%, #88CC00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-solar {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-wind {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+pre {
+  background: #121212 !important;
+  border: 1px solid #262626;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.875rem;
+}
+
+:not(pre) > code {
+  background: #171717;
+  color: #AAFF00;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+a {
+  color: #AAFF00;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #88CC00;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7A7A72;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-border {
+  background: linear-gradient(90deg, #AAFF00, #88CC00, #AAFF00);
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fade-in 0.5s ease-out forwards; }
+.fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+@keyframes hero-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.hero-glow {
+  animation: hero-glow 4s ease-in-out infinite;
+}
+
+/* Energy-themed subtle grid pattern */
+.energy-grid {
+  background-image:
+    linear-gradient(rgba(170, 255, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(170, 255, 0, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Subtle pulse for accent elements */
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.pulse-subtle {
+  animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+/* Video container overlay gradient */
+.video-overlay {
+  background: linear-gradient(180deg, transparent 0%, rgba(10, 10, 10, 0.4) 100%);
+}
+
+/* Smooth card hover lift */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* Style académique du corps des chapitres                              */
+/* ──────────────────────────────────────────────────────────────────── */
+
+.prose-db {
+  max-width: 43rem;
+  margin: 0 auto;
+  font-family: 'Source Serif 4', Georgia, Cambria, 'Times New Roman', serif;
+  font-size: 1.06rem;
+  line-height: 1.85;
+  color: #E6E6E0;
+}
+
+.prose-db > * + * {
+  margin-top: 1.25rem;
+}
+
+.prose-db h1 + p,
+.prose-db h2 + p,
+.prose-db h3 + p {
+  margin-top: 0.9rem;
+}
+
+.prose-db p {
+  text-align: justify;
+  hyphens: auto;
+  margin-bottom: 0.9rem;
+}
+
+.prose-db h2 {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #F2F2F2;
+  margin-top: 3.25rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(170, 255, 0, 0.14);
+}
+
+.prose-db h3 {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.16rem;
+  font-weight: 600;
+  color: #EAEAE2;
+  margin-top: 2.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.prose-db .section-num {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  font-weight: 500;
+  color: #AAFF00;
+  margin-right: 0.65em;
+  vertical-align: 0.08em;
+}
+
+/* Tableaux */
+.prose-db table {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Légendes de figures */
+.prose-db figcaption {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Callout styles */
+.callout-intuition { border-left-color: #56B6C2; }
+.callout-interpretation { border-left-color: #AAFF00; }
+.callout-formalisation { border-left-color: #E6C229; }
+.callout-transition { border-left-color: #8b5cf6; }
+
+/* KaTeX overrides */
+.katex { color: #F2F2F2; }
+.katex .mord { color: #F2F2F2; }
+
+/* Math formula blocks — use KaTeX fonts for proper Unicode math rendering */
+.bg-db-surface.font-mono {
+  font-family: 'KaTeX_Main', 'KaTeX_Math', 'STIX Two Math', 'Latin Modern Math', 'Cambria Math', 'Lucida Bright Math', 'JetBrains Mono', monospace;
+  line-height: 2;
+  letter-spacing: 0.02em;
+}
+
+.bg-db-surface.font-mono sub {
+  font-size: 0.7em;
+  vertical-align: sub;
+}
+
+.bg-db-surface.font-mono sup {
+  font-size: 0.7em;
+  vertical-align: super;
+}
+
+.bg-db-surface.font-mono em {
+  font-style: italic;
+  color: #e2e2da;
+}
+
+/* Prose math inline */
+.prose-db code {
+  font-family: 'KaTeX_Main', 'KaTeX_Math', 'JetBrains Mono', monospace;
+  color: #c8c8c0;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.95em;
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* Deck de soutenance (/presentation)                                   */
+/* ──────────────────────────────────────────────────────────────────── */
+
+/* Tracé progressif de l'arc du soleil (couverture) */
+@keyframes arc-draw {
+  from { stroke-dashoffset: 960; }
+  to { stroke-dashoffset: 0; }
+}
+.arc-draw {
+  stroke-dasharray: 960;
+  animation: arc-draw 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* Le soleil voyage sur son arc (motion path CSS) */
+@keyframes sun-travel {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+.sun-dot {
+  offset-distance: 0%;
+  animation: sun-travel 18s linear infinite;
+}
+
+/* Entrée de planche : montée discrète, un seul mouvement par slide */
+@keyframes slide-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.slide-enter {
+  animation: slide-enter 0.46s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+
+/* Filet qui se dessine de gauche à droite (couverture, règles maîtresses) */
+@keyframes rule-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.rule-draw {
+  transform-origin: left center;
+  animation: rule-draw 0.9s cubic-bezier(0.22, 0.7, 0.2, 1) both;
+}
+
+/* ──────────────────────────────────────────────────────────────────── */
+/* Video player                                                         */
+/* ──────────────────────────────────────────────────────────────────── */
+video::-webkit-media-controls-panel {
+  background: linear-gradient(transparent, rgba(10,10,10,0.8));
+}
+
+/* Chart tooltip */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+.custom-tooltip {
+  background: #121212 !important;
+  border: 1px solid #262626 !important;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
