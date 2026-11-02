@@ -422,7 +422,7 @@ export const chapterContent: ChapterData = {
             },
             {
               type: 'figure',
-              src: '/figures/features_pipline_flow.drawio.png',
+              src: '/figures/features_pipline_flow.drawio_.png',
               caption:
                 "Boucle de feature engineering~: les sept plugins de `DEFAULT_PLUGINS` s'exécutent en séquence déterministe, suivis du ménage anti-fuite (constantes, corrélation $>0{,}99$, doublons) et des étapes opt-in (rythmes, encodage).",
               heightClass: 'h-80 md:h-[28rem]',
