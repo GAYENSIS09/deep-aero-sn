@@ -174,7 +174,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Dans le code, le recalibrage CQR est appliqué avec $\\alpha = 0.20$ sur le jeu de validation, puis évalué sur le test. Les journaux du notebook consignent son effet sur la couverture P10--P90 : pour le TCN, elle passe de $60{,}8\\,\\%$ à $79{,}8\\,\\%$, proche de la cible de 80~\\% ; pour le TFT, de $71{,}2\\,\\%$ à $74{,}2\\,\\%$, avec une enveloppe plus étroite et une largeur moyenne nettement inférieure ($0.095$~MW contre $0.463$~MW). C'est cette étape qui transforme l'enveloppe brute de la perte hybride en un intervalle à garantie de couverture vérifiable, sans réentraînement du réseau. La largeur de l'intervalle étant un quantile *absolu* des résidus de calibration, elle s'élargit naturellement avec l'horizon $h$, ce qui préserve une couverture stable.",
+            "Dans le code, le recalibrage CQR est appliqué avec $\\alpha = 0.20$ sur le jeu de validation, puis évalué sur le test. Le recalibrage CQR modifie la couverture comme suit : pour le TCN, elle passe de $60{,}8\\,\\%$ à $79{,}8\\,\\%$, proche de la cible de 80~\\% ; pour le TFT, de $71{,}2\\,\\%$ à $74{,}2\\,\\%$, avec une enveloppe plus étroite et une largeur moyenne nettement inférieure ($0.095$~MW contre $0.463$~MW). C'est cette étape qui transforme l'enveloppe brute de la perte hybride en un intervalle à garantie de couverture vérifiable, sans réentraînement du réseau. La largeur de l'intervalle étant un quantile *absolu* des résidus de calibration, elle s'élargit naturellement avec l'horizon $h$, ce qui préserve une couverture stable.",
         },
         {
           type: 'text',

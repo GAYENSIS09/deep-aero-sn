@@ -64,7 +64,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "**Données SCADA.** Les données d'exploitation couvrent la période du 30 août 2025 au 31 août 2026. Elles sont réparties dans six classeurs Excel issus du système de supervision Schneider~: paramètres DC, paramètres AC, mesures des DC Box, températures des cartes de puissance et deux ensembles de mesures météorologiques. Les fichiers décrivent les équipements de la centrale ainsi que le compteur de livraison HTA et la station météorologique. Après lecture et normalisation des horodatages, les différentes sources sont ramenées à une même série temporelle de référence à 15 minutes. Le notebook d'ingestion obtient ainsi **35~196 lignes à 15~minutes et 58~colonnes**, dont environ 34~600 observations non manquantes pour les variables SCADA ($T_{inv}$~: 34~606, $P_{ac}$~: 34~602, $G_{sw}$~: 34~601). Cette résolution source est ensuite agrégée à 1~heure par le pipeline de données, avant le feature engineering et l'apprentissage.",
+                "**Données SCADA.** Les données d'exploitation couvrent la période du 30 août 2025 au 31 août 2026. Elles sont réparties dans six classeurs Excel issus du système de supervision Schneider~: paramètres DC, paramètres AC, mesures des DC Box, températures des cartes de puissance et deux ensembles de mesures météorologiques. Les fichiers décrivent les équipements de la centrale ainsi que le compteur de livraison HTA et la station météorologique. Après lecture et normalisation des horodatages, les différentes sources sont ramenées à une même série temporelle de référence à 15 minutes. On obtient ainsi **35~196 lignes à 15~minutes et 58~colonnes**, dont environ 34~600 observations non manquantes pour les variables SCADA ($T_{inv}$~: 34~606, $P_{ac}$~: 34~602, $G_{sw}$~: 34~601). Cette résolution source est ensuite agrégée à 1~heure par le pipeline de données, avant le feature engineering et l'apprentissage.",
             },
             {
               type: 'text',
@@ -94,7 +94,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "**Construction du jeu final.** Après normalisation des noms de variables, agrégation des mesures SCADA, harmonisation temporelle à 15 minutes, enrichissement par les réanalyses et ajout des variables physiques, les données sources sont enregistrées dans `raw_input.parquet` (35~196 lignes à 15~minutes, 58 colonnes dont 55 hors imputation). Le pipeline applique ensuite le resampling horaire et sauvegarde le jeu de features utilisé par les modèles (`diass_features.parquet`, 8~800 lignes horaires et 428 colonnes dans le run du 6~octobre 2026, pour 427~features générées). Les deux volumétries sont rapportées séparément et ne doivent pas être confondues.\n\nLa chaîne de traitement distingue trois niveaux~: les observations directement issues de la centrale (**mesure**), les informations provenant de sources externes (**réanalyse**) et les variables produites par calcul ou fixées à partir des caractéristiques de l'installation (**paramètre**). Le notebook `diass.ipynb` sert de référence~: toute valeur citée dans ce chapitre y est vérifiable.",
+                "**Construction du jeu final.** Après normalisation des noms de variables, agrégation des mesures SCADA, harmonisation temporelle à 15 minutes, enrichissement par les réanalyses et ajout des variables physiques, les données sources sont enregistrées dans `raw_input.parquet` (35~196 lignes à 15~minutes, 58 colonnes dont 55 hors imputation). Le pipeline applique ensuite le resampling horaire et sauvegarde le jeu de features utilisé par les modèles (`diass_features.parquet`, 8~800 lignes horaires et 428 colonnes dans le run du 6~octobre 2026, pour 427~features générées). Les deux volumétries sont rapportées séparément et ne doivent pas être confondues.\n\nLa chaîne de traitement distingue trois niveaux~: les observations directement issues de la centrale (**mesure**), les informations provenant de sources externes (**réanalyse**) et les variables produites par calcul ou fixées à partir des caractéristiques de l'installation (**paramètre**). ",
             },
           ],
         },
@@ -105,12 +105,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Ce parcours, fidèle au notebook `diass.ipynb` (source de vérité) et au script `diass.py`, retrace le cheminement des données depuis les exports du système SCADA jusqu'au vecteur de **features** alimentant les modèles. La transparence de ce cheminement est essentielle~: elle permet d'affirmer la validité des résultats présentés plus loin, en distinguant à chaque étape ce qui est **mesuré**, **téléchargé**, **reconstruit** ou **calculé**.",
+                "Ce parcours retrace le cheminement des données depuis les exports du système SCADA jusqu'au vecteur de **features** alimentant les modèles. La transparence de ce cheminement est essentielle~: elle permet d'affirmer la validité des résultats présentés plus loin, en distinguant à chaque étape ce qui est **mesuré**, **téléchargé**, **reconstruit** ou **calculé**.",
             },
             {
               type: 'text',
               content:
-                "**Ingestion SCADA : lecture et transformations de `diass.py`**\n\nLe script `diass.py` construit de façon reproductible le parquet brut de la centrale. La fonction `load_scada` lit les **six classeurs Excel** issus du superviseur Schneider~: paramètres DC, paramètres AC, mesures des DC Box, températures des cartes de puissance et deux ensembles de mesures météorologiques. Chaque classeur est identifié par un fragment de nom de fichier. La lecture est suivie de plusieurs transformations systématiques. La fonction `_parse_timestamp` normalise d'abord les horodatages en combinant la colonne `Date` (format `%d/%m/%Y`) et l'heure extraite de `Temps`, pour produire un index `timestamp` unifié puis trié, première garantie de cohérence entre des sources de formats hétérogènes. Les colonnes utiles sont ensuite retrouvées par expressions régulières, ce qui rend la lecture robuste aux variations de libellés. Les grandeurs sont agrégées à l'échelle de la centrale~: tensions et courants sont moyennés sur les équipements, tandis que les puissances contributives sont sommées, `P_dc` étant par exemple la somme des puissances DC des boxes. Les compteurs cumulatifs (`ENERGIA`~...) sont différenciés par `diff` puis bornés à zéro, afin qu'un retour ou une remise à zéro ne produise jamais d'énergie négative. Les puissances exprimées en kW sont enfin converties en MW, et les grandeurs structurantes sont récupérées selon la même logique~: tension réseau (`V_ac`), fréquence (`grid_frequency`), facteur de puissance (`cos_phi`), irradiance...",
+                "**Ingestion SCADA**\n\nLa lecture des classeurs construit le parquet brut de la centrale. La fonction `load_scada` lit les **six classeurs Excel** issus du superviseur Schneider~: paramètres DC, paramètres AC, mesures des DC Box, températures des cartes de puissance et deux ensembles de mesures météorologiques. Chaque classeur est identifié par un fragment de nom de fichier. La lecture est suivie de plusieurs transformations systématiques. La fonction `_parse_timestamp` normalise d'abord les horodatages en combinant la colonne `Date` (format `%d/%m/%Y`) et l'heure extraite de `Temps`, pour produire un index `timestamp` unifié puis trié, première garantie de cohérence entre des sources de formats hétérogènes. Les colonnes utiles sont ensuite retrouvées par expressions régulières, ce qui rend la lecture robuste aux variations de libellés. Les grandeurs sont agrégées à l'échelle de la centrale~: tensions et courants sont moyennés sur les équipements, tandis que les puissances contributives sont sommées, `P_dc` étant par exemple la somme des puissances DC des boxes. Les compteurs cumulatifs (`ENERGIA`~...) sont différenciés par `diff` puis bornés à zéro, afin qu'un retour ou une remise à zéro ne produise jamais d'énergie négative. Les puissances exprimées en kW sont enfin converties en MW, et les grandeurs structurantes sont récupérées selon la même logique~: tension réseau (`V_ac`), fréquence (`grid_frequency`), facteur de puissance (`cos_phi`), irradiance...",
             },
             {
               type: 'text',
@@ -350,7 +350,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "**Implémentation**\n\nCes transformations sont implémentées dans le script `diass.py`, le notebook n'en conservant que la justification scientifique. Le décalage temporel porte sur 96~pas, soit 24~heures à la résolution de 15~minutes. Les retards de 24~heures appliqués aux courants, aux tensions, au facteur de puissance et à l'insolation sont obtenus par décalage d'autant de pas et restent indéfinis sur les 96~premiers pas, faute de passé. Trois rapports composites mettent en regard le passé électrique et l'irradiance~: l'encrassement, quotient du courant continu de la veille et de l'irradiance au plan de la veille~; la conversion de l'onduleur, quotient des puissances alternative et continue de la veille~; et le rapport des courants alternatif et continu de la veille. Enfin, un écart-type glissant sur 24~heures, purement passé, résume la tension réseau sur la fenêtre $[t{-}95,\\; t]$.",
+                "**Implémentation**\n\nCes transformations sont appliquées de façon systématique. Le décalage temporel porte sur 96~pas, soit 24~heures à la résolution de 15~minutes. Les retards de 24~heures appliqués aux courants, aux tensions, au facteur de puissance et à l'insolation sont obtenus par décalage d'autant de pas et restent indéfinis sur les 96~premiers pas, faute de passé. Trois rapports composites mettent en regard le passé électrique et l'irradiance~: l'encrassement, quotient du courant continu de la veille et de l'irradiance au plan de la veille~; la conversion de l'onduleur, quotient des puissances alternative et continue de la veille~; et le rapport des courants alternatif et continu de la veille. Enfin, un écart-type glissant sur 24~heures, purement passé, résume la tension réseau sur la fenêtre $[t{-}95,\\; t]$.",
             },
             {
               type: 'text',
@@ -390,13 +390,13 @@ export const chapterContent: ChapterData = {
                 { group: 'Lags' },
                 ['`ghi_lag_1h`, `_24h`, `_72h`', "Lags causaux d'irradiance"],
                 ['`P_ac_lag_1h` -- `_72h`', 'Lags causaux de puissance'],
-                ['`soiling_ratio_hist_24h`', "Indice d'encrassement $J{-}1$ (diass.py)"],
+                ['`soiling_ratio_hist_24h`', "Indice d'encrassement $J{-}1$"],
               ],
             },
             {
               type: 'text',
               content:
-                "Les familles de features mobilisées sont les suivantes~: la **géométrie solaire** (`solar_elevation`, `solar_azimuth`, `clear_sky_ghi`, déterministes et calculables à l'avance)~; l'**irradiance** (`ghi`, `dni`, `dhi`, `g_poa`)~; la **température** (`temp_air`, `module_temp` via le modèle NOCT)~; les **aérosols et nuages** (`aod`, `dust`, `pm10`, `pm2_5`, `cloud_cover`)~; les **variables temporelles** (`hour_sin/cos`, jour de l'année, `is_harmattan`, `is_mousson`)~; et les **lags et statistiques glissantes** causaux (`_lag_1h` à `_72h`, moyennes et écarts-types sur 24~heures). Les variables électriques historiques (`soiling_ratio_hist_24h`, rendements onduleur, stabilité réseau) sont construites en amont dans `diass.py` par décalage de 24~heures et consommées telles quelles par les plugins, sans jamais introduire de grandeur contemporaine de la cible.\n\nDans le run de référence du 6~octobre 2026, cette chaîne produit 543~variables numériques en entrée de sélection, pour une union finale de 424~features (cible exclue), soit une dimension d'entrée de 425 pour les modèles et un parquet de features de 8~800 lignes et 428 colonnes.",
+                "Les familles de features mobilisées sont les suivantes~: la **géométrie solaire** (`solar_elevation`, `solar_azimuth`, `clear_sky_ghi`, déterministes et calculables à l'avance)~; l'**irradiance** (`ghi`, `dni`, `dhi`, `g_poa`)~; la **température** (`temp_air`, `module_temp` via le modèle NOCT)~; les **aérosols et nuages** (`aod`, `dust`, `pm10`, `pm2_5`, `cloud_cover`)~; les **variables temporelles** (`hour_sin/cos`, jour de l'année, `is_harmattan`, `is_mousson`)~; et les **lags et statistiques glissantes** causaux (`_lag_1h` à `_72h`, moyennes et écarts-types sur 24~heures). Les variables électriques historiques (`soiling_ratio_hist_24h`, rendements onduleur, stabilité réseau) sont construites en amont par décalage de 24~heures et consommées telles quelles par les plugins, sans jamais introduire de grandeur contemporaine de la cible.\n\nDans le run de référence du 6~octobre 2026, cette chaîne produit 543~variables numériques en entrée de sélection, pour une union finale de 424~features (cible exclue), soit une dimension d'entrée de 425 pour les modèles et un parquet de features de 8~800 lignes et 428 colonnes.",
             },
             {
               type: 'text',
@@ -418,7 +418,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Deux modules complémentaires ne font pas partie du registre par défaut~: le `FrequencyFeatureEngineer`, activable explicitement pour l'analyse spectrale, et le `SolarLossEngineer` (constantes de pertes LID, PID, mismatch, câblage et dégradation annuelle), qui reste disponible sans être exécuté dans le run courant. L'indice de soiling `soiling_ratio_hist_24h` n'est pas produit par un plugin~: il est calculé dans `diass.py` comme le rapport $I_{\\text{dc},J-1}/G_{\\text{sw},J-1}$ borné puis propagé, et il est ensuite consommé comme tout autre historique causal.",
+                "Deux modules complémentaires ne font pas partie du registre par défaut~: le `FrequencyFeatureEngineer`, activable explicitement pour l'analyse spectrale, et le `SolarLossEngineer` (constantes de pertes LID, PID, mismatch, câblage et dégradation annuelle), qui reste disponible sans être exécuté dans le run courant. L'indice de soiling `soiling_ratio_hist_24h` n'est pas produit par un plugin~: il est calculé directement comme le rapport $I_{\\text{dc},J-1}/G_{\\text{sw},J-1}$ borné puis propagé, et il est ensuite consommé comme tout autre historique causal.",
             },
             {
               type: 'figure',
@@ -467,7 +467,7 @@ export const chapterContent: ChapterData = {
             },
             {
               type: 'table',
-              caption: "Répartition par famille de l'union finale (424~features, section 3.2 du notebook).",
+              caption: "Répartition par famille de l'union finale (424~features).",
               headers: ['Famille', 'N', '%'],
               rows: [
                 ['Lags / fenêtres $J{-}1$', '137', '32,3'],
@@ -529,7 +529,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "**Optimisation des hyperparamètres avec Optuna**\n\nL'entraînement des modèles avancés (TCN, TFT) repose sur une recherche d'hyperparamètres pilotée par **Optuna**. Les hyperparamètres (taux d'apprentissage, `batch_size`, `mse_weight`, planificateur de taux, fenêtres, architecture) ne sont pas fixés arbitrairement~: Optuna les propose et **évalue chaque combinaison** en entraînant le modèle et en mesurant sa performance de validation, remplaçant ainsi la grille exhaustive ou le réglage manuel. L'échantillonneur retenu est un **TPE** (*Tree-structured Parzen Estimator*), méthode bayésienne qui modélise la distribution des bons résultats et concentre les essais dans les régions prometteuses de l'espace plutôt que d'explorer uniformément~; chaque essai est tracé avec son objectif, ce qui permet de suivre la convergence. Un élagage **médian** interrompt par ailleurs les essais déjà nettement pires que la médiane des essais en cours, économisant le temps de calcul sans compromettre le résultat. L'objectif minimise une métrique de validation adaptée à la prévision probabiliste, la perte hybride MSE + pinball pondérée par `mse_weight` $= 0{,}5$ (chapitre 7), en explorant `mse_weight` $\\in [0{,}3; 0{,}8]$ sur deux décades de taux d'apprentissage et plusieurs planificateurs (plateau, cosinus, warmup cosinus). Pour les baselines, dix essais suffisent car leur espace est réduit~; pour le TCN et le TFT, davantage d'essais sont consacrés à l'architecture et à la stratégie d'horizon. Le meilleur essai est ensuite figé (graine $42$, arrêt précoce configuré séparément) et enregistré dans MLflow avec son `run_id`.\n\nLa même graine et les mêmes bornes permettent de retrouver exactement les modèles évalués à la section ci-dessous.",
+                "**Optimisation des hyperparamètres avec Optuna**\n\nL'entraînement des modèles avancés (TCN, TFT) repose sur une recherche d'hyperparamètres pilotée par **Optuna**. Les hyperparamètres (taux d'apprentissage, `batch_size`, `mse_weight`, planificateur de taux, fenêtres, architecture) ne sont pas fixés arbitrairement~: Optuna les propose et **évalue chaque combinaison** en entraînant le modèle et en mesurant sa performance de validation, remplaçant ainsi la grille exhaustive ou le réglage manuel. L'échantillonneur retenu est un **TPE** (*Tree-structured Parzen Estimator*), méthode bayésienne qui modélise la distribution des bons résultats et concentre les essais dans les régions prometteuses de l'espace plutôt que d'explorer uniformément~; chaque essai est tracé avec son objectif, ce qui permet de suivre la convergence. Un élagage **médian** interrompt par ailleurs les essais déjà nettement pires que la médiane des essais en cours, économisant le temps de calcul sans compromettre le résultat. L'objectif minimise une métrique de validation adaptée à la prévision probabiliste, la perte hybride MSE + pinball pondérée par `mse_weight` $= 0{,}5$ (chapitre 7), en explorant `mse_weight` $\\in [0{,}3; 0{,}8]$ sur deux décades de taux d'apprentissage et plusieurs planificateurs (plateau, cosinus, warmup cosinus). Pour les baselines, dix essais suffisent car leur espace est réduit~; pour le TCN et le TFT, davantage d'essais sont consacrés à l'architecture et à la stratégie d'horizon. Le meilleur essai est ensuite figé (graine $42$, arrêt précoce configuré séparément) et enregistré dans MLflow avec son `run_id`.",
             },
           ],
         },
@@ -540,7 +540,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Cinq modèles ont été entraînés sur les données de Diass avec un horizon de prévision de **72~heures**~: les trois repères usuels, la persistance, le MLP et le LSTM de base, entraînés via le pipeline des baselines avec dix essais d'optimisation~; puis le TCN et le TFT, entraînés via le pipeline général avec dix essais, la perte hybride de MSE et de pinball, et les covariables météorologiques NWP injectées au canal futur. Tous sont évalués sur le même segment de test, **1~049 fenêtres** allant d'un historique de 168~heures vers 72~heures d'horizon, sur la période du 16/07/2026 06h00 au 28/08/2026 22h00 prolongée de 72~h~; les métriques ci-dessous sont issues du notebook `diass.ipynb` (run du 6~octobre 2026)~:",
+                "Cinq modèles ont été entraînés sur les données de Diass avec un horizon de prévision de **72~heures**~: les trois repères usuels, la persistance, le MLP et le LSTM de base, entraînés via le pipeline des baselines avec dix essais d'optimisation~; puis le TCN et le TFT, entraînés via le pipeline général avec dix essais, la perte hybride de MSE et de pinball, et les covariables météorologiques NWP injectées au canal futur. Tous sont évalués sur le même segment de test, **1~049 fenêtres** allant d'un historique de 168~heures vers 72~heures d'horizon, sur la période du 16/07/2026 06h00 au 28/08/2026 22h00 prolongée de 72~h~; les métriques ci-dessous sont calculées sur ce segment de test~:",
             },
             {
               type: 'figure',
@@ -620,13 +620,13 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "**Courbes d'entraînement**\n\nLes courbes d'entraînement du run courant (section 5.1 du notebook) montrent une convergence régulière des deux modèles avancés, avec early stopping (patience 25, maximum 100 époques)~: le TCN s'arrête à l'époque 57 et le TFT va au terme des 100 époques. Les pertes finales de validation restent proches des pertes d'entraînement, ce qui indique une bonne généralisation sans surapprentissage marqué.",
+                "**Courbes d'entraînement**\n\nLes courbes d'entraînement montrent une convergence régulière des deux modèles avancés, avec early stopping (patience 25, maximum 100 époques)~: le TCN s'arrête à l'époque 57 et le TFT va au terme des 100 époques. Les pertes finales de validation restent proches des pertes d'entraînement, ce qui indique une bonne généralisation sans surapprentissage marqué.",
             },
             {
               type: 'figure',
               src: '/figures/nb_diass_learning_curves.png',
               caption:
-                "Courbes d'entraînement (pertes train/validation) du TCN ($R^2{=}0{,}877$) et du TFT ($R^2{=}0{,}861$) sur Diass (section 5.1 du notebook).",
+                "Courbes d'entraînement (pertes train/validation) du TCN ($R^2{=}0{,}877$) et du TFT ($R^2{=}0{,}861$) sur Diass.",
               heightClass: 'h-64 md:h-72',
             },
             {
@@ -771,11 +771,6 @@ export const chapterContent: ChapterData = {
           type: 'text',
           content:
             "Une année d'entraînement suffit pour montrer que le pipeline tient sur Diass, pas pour garantir que les hyperparamètres retenus resteront stables d'une saison à l'autre. C'est la principale limite de ce travail~: la stabilité devra être vérifiée sur plusieurs années avant un déploiement opérationnel. Une seconde limite, plus structurelle, tient au pas horaire~: les passages nuageux sahéliens durent souvent moins d'une heure et sont lissés par le rééchantillonnage, ce qui plafonne mécaniquement la précision atteignable à 72~h. Un modèle dédié aux horizons courts (1--6~h, résolution 5--15~min) comblerait cette lacune, au prix d'une architecture distincte. Enfin, le coût mémoire du TFT, engendré par l'attention quadratique posée sur la fenêtre d'entrée, reste un frein pratique au déploiement embarqué, même si son interprétabilité en fait un outil précieux côté opérateur.",
-        },
-        {
-          type: 'text',
-          content:
-            "La **reproductibilité** combine trois dispositifs~: un `run_id` unique par expérience, qui fixe hyperparamètres, graine et signature des features~; l'archivage des configurations dans des fichiers JSON~; et des données de Diass issues de sources publiques, réutilisables par d'autres chercheurs.",
         },
         {
           type: 'text',
