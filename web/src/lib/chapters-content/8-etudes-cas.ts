@@ -18,7 +18,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le site de Diass est la **première centrale solaire photovoltaïque publique du Sénégal**, détenue et exploitée par la **SENELEC**. Située dans le département de Mbour (région de Thiès), à environ 40--50~km au sud-est de Dakar, non loin de l'aéroport international Blaise Diagne, elle a été mise en service en mai 2022 et constitue un jalon majeur pour la transition énergétique du pays (SENELEC, 2025 ; SENELEC). Son financement a été assuré par un prêt de la banque allemande KfW ($\\sim$18~milliards FCFA).",
+                "Le site de Diass est la **première centrale solaire photovoltaïque publique du Sénégal**, détenue et exploitée par la **SENELEC**. Située dans le département de Mbour , à environ 40--50~km au sud-est de Dakar, non loin de l'aéroport international Blaise Diagne, elle a été mise en service en mai 2022 et constitue un jalon majeur pour la transition énergétique du pays (SENELEC, 2025 ; SENELEC). Son financement a été assuré par un prêt de la banque allemande KfW ($\\sim$18~milliards FCFA).",
             },
             {
               type: 'table',
@@ -59,7 +59,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Trois familles de données entrent dans le jeu final~: les mesures SCADA de la centrale, les réanalyses externes (NASA POWER, ERA5, CAMS) et les variables calculées à partir de la géométrie du site. Elles n'ont ni la même résolution, ni la même latence, ni la même fiabilité. Plutôt que de les fondre en une série indifférenciée, le pipeline conserve pour chaque colonne son origine, parce que la prévision hérite de l'incertitude propre à chacune.",
+                "Trois familles de données entrent dans le jeu final~: les mesures SCADA de la centrale, les réanalyses externes et les variables calculées à partir de la géométrie du site. Elles n'ont ni la même résolution, ni la même latence, ni la même fiabilité. Plutôt que de les fondre en une série indifférenciée, le pipeline conserve pour chaque colonne son origine, parce que la prévision hérite de l'incertitude propre à chacune.",
             },
             {
               type: 'text',
