@@ -5,7 +5,7 @@ export const chapterContent: ChapterData = {
   title: 'Physique et technologie photovoltaïque',
   part: 'Partie I — Contexte physique et données',
   intro:
-    "Ce chapitre présente les bases physiques de la filière photovoltaïque et les mécanismes qui régissent la production d'électricité. Du rayonnement solaire au comportement de la cellule semi-conductrice, chaque maillon éclaire les grandeurs clés que tout modèle de prévision se doit de capturer.",
+    "Ce chapitre décrit la chaîne physique de la production photovoltaïque : du rayonnement solaire jusqu'au comportement de la cellule semi-conductrice. Chaque maillon y expose les grandeurs clés qu'un modèle de prévision doit capturer.",
   sections: [
     {
       type: 'section',
@@ -18,12 +18,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le Soleil est une étoile d'environ **1~400~000~km de diamètre** animée par des réactions de **fusion d'hydrogène en hélium**, qui libèrent des quantités colossales d'énergie (Ajzoul, s.d.). Une infime fraction de ce flux parvient jusqu'à la Terre sous forme de rayonnement électromagnétique.",
+                "Le Soleil est une étoile d'environ **1~400~000~km de diamètre**. Des réactions de **fusion d'hydrogène en hélium** y libèrent des quantités colossales d'énergie (Ajzoul, s.d.). Seule une infime fraction de ce flux atteint la Terre, sous forme de rayonnement électromagnétique.",
             },
             {
               type: 'text',
               content:
-                'La puissance globale émise par un corps incandescent obéit à la **loi de Stefan--Boltzmann**~:',
+                "La puissance qu'un corps incandescent émet suit la **loi de Stefan--Boltzmann**~:",
             },
             {
               type: 'math',
@@ -33,12 +33,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "où $S$ représente la surface de l'astre, $\\sigma$ la constante de Stefan--Boltzmann, et $T$ sa température de surface. La puissance rayonnée augmentant avec la quatrième puissance de la température, de légères variations thermiques influencent considérablement l'énergie émise par l'étoile.",
+                "où $S$ est la surface de l'astre, $\\sigma$ la constante de Stefan--Boltzmann et $T$ sa température de surface. Le terme $T^4$ domine le calcul : de légères variations de température influencent fortement l'énergie émise par l'étoile.",
             },
             {
               type: 'text',
               content:
-                "En dehors de l'atmosphère, le spectre de référence est l'orbe **AM0** (Air Mass 0), qui correspond à une irradiance extraterrestre d'environ **1~367~W/m²**. Au niveau du sol, la convention **AM1,5** modélise le rayonnement après la traversée d'une masse d'air standard, fixant la puissance incidente de référence à **1~000~W/m²** (Ajzoul, s.d. ; Toumi, 2021).",
+                "Hors atmosphère, le spectre de référence est **AM0** (Air Mass 0) : son irradiance extraterrestre vaut environ **1~367~W/m²**. Au sol, la convention **AM1,5** décrit le rayonnement après traversée d'une masse d'air standard ; la puissance incidente de référence y est de **1~000~W/m²** (Ajzoul, s.d. ; Toumi, 2021).",
             },
             {
               type: 'figure',
@@ -56,12 +56,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "L'énergie interceptée par un panneau dépend directement de la position apparente du Soleil, liée à la latitude du site, à la date et à l'heure. Les angles sont exprimés dans le repère local $(x, y, z)$ ($x$ vers l'est, $y$ vers le nord, $z$ vers le zénith), avec des azimuts comptés depuis le nord et positifs vers l'est ($0^\\circ$~=~nord, $90^\\circ$~=~est, $180^\\circ$~=~sud, $270^\\circ$~=~ouest).",
+                "L'énergie qu'un panneau intercepte dépend de la position apparente du Soleil, elle-même fixée par la latitude du site, la date et l'heure. Tous les angles se lisent dans le repère local $(x, y, z)$ : $x$ vers l'est, $y$ vers le nord, $z$ vers le zénith. L'azimut se compte depuis le nord, positif vers l'est ($0^\\circ$~=~nord, $90^\\circ$~=~est, $180^\\circ$~=~sud, $270^\\circ$~=~ouest).",
             },
             {
               type: 'text',
               content:
-                "La latitude $\\varphi$ du site ($\\varphi = 14{,}65^\\circ$~N à Diass) et le jour de l'année $N$ dictent la trajectoire solaire. La **déclinaison solaire** $\\delta$, qui traduit la latitude du point subsolaire, s'obtient par la formule de Cooper~:",
+                "La trajectoire du Soleil se déduit de la latitude $\\varphi$ du site ($\\varphi = 14{,}65^\\circ$~N à Diass) et du jour de l'année $N$. La **déclinaison solaire** $\\delta$ — la latitude du point subsolaire — se calcule par la formule de Cooper~:",
             },
             {
               type: 'math',
@@ -71,12 +71,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Elle varie de $-23{,}45^\\circ$ à $+23{,}45^\\circ$ au fil des saisons, un calcul directement repris par le module `SolarPhysicalEngineer` du pipeline.",
+                "Elle varie de $-23{,}45^\\circ$ à $+23{,}45^\\circ$ au fil des saisons. Le module `SolarPhysicalEngineer` du pipeline reprend ce calcul tel quel.",
             },
             {
               type: 'text',
               content:
-                "Pour caler l'heure civile sur la course réelle du Soleil, l'**équation du temps** $E_q$ (en minutes) corrige l'excentricité de l'orbite terrestre~:",
+                "Pour aligner l'heure civile sur la course réelle du Soleil, l'**équation du temps** $E_q$ (en minutes) corrige l'excentricité de l'orbite terrestre~:",
             },
             {
               type: 'math',
@@ -86,12 +86,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le temps solaire local $t_{sl}$ s'en déduit, ce qui permet de calculer l'**angle horaire** $\\omega = 15^\\circ \\cdot (t_{sl} - 12)$, nul à midi solaire.",
+                "Le temps solaire local $t_{sl}$ s'en déduit ; il donne l'**angle horaire** $\\omega = 15^\\circ \\cdot (t_{sl} - 12)$, nul à midi solaire.",
             },
             {
               type: 'text',
               content:
-                "La hauteur solaire $\\alpha_s$ et l'azimut $A_s$ se déduisent de ces coordonnées. Pour un panneau caractérisé par son inclinaison $\\beta$ et son azimut $A_p$ (par exemple $\\beta = 15^\\circ$ et $A_p = 180^\\circ$ pour la structure fixe de Diass), l'**angle d'incidence** $\\theta_i$ entre les rayons solaires et la normale du panneau $\\mathbf{n}$ s'exprime via le produit scalaire $\\cos\\theta_i = \\mathbf{n}\\cdot\\mathbf{s}$~:",
+                "La hauteur solaire $\\alpha_s$ et l'azimut $A_s$ se déduisent des coordonnées précédentes. Un panneau se caractérise par son inclinaison $\\beta$ et son azimut $A_p$ ; à Diass, la structure fixe vaut $\\beta = 15^\\circ$ et $A_p = 180^\\circ$. L'**angle d'incidence** $\\theta_i$ entre les rayons solaires et la normale du panneau $\\mathbf{n}$ s'écrit comme un produit scalaire, $\\cos\\theta_i = \\mathbf{n}\\cdot\\mathbf{s}$~:",
             },
             {
               type: 'math',
@@ -101,7 +101,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Cette relation fondamentale gouverne l'apport direct de l'irradiance sur le module~: $G_{\\text{dir,POA}} = G_{\\text{dir}}\\cos\\theta_i$. Les trackers solaires exploitent précisément ce principe en ajustant en continu l'orientation du panneau pour maintenir $\\cos\\theta_i \\approx 1$.",
+                "Cette relation fixe l'apport direct sur le module~: $G_{\\text{dir,POA}} = G_{\\text{dir}}\\cos\\theta_i$. Les trackers solaires l'exploitent : ils réorientent en continu le panneau pour maintenir $\\cos\\theta_i \\approx 1$.",
             },
             {
               type: 'figure',
@@ -119,12 +119,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Hors de l'atmosphère, l'irradiance extraterrestre AM0 atteint environ **1~367~W/m²** (Toumi, 2021). En traversant la couche atmosphérique, ce flux subit des pertes par diffusion et absorption, une atténuation quantifiée par la masse d'air AM (Toumi, 2021 ; Ajzoul, s.d.).",
+                "Hors atmosphère, l'irradiance extraterrestre AM0 vaut environ **1~367~W/m²** (Toumi, 2021). En traversant l'atmosphère, ce flux perd par diffusion et absorption ; la masse d'air AM mesure cette atténuation (Ajzoul, s.d.).",
             },
             {
               type: 'text',
               content:
-                "Au sol, le rayonnement se compose de trois apports distincts : l'**irradiance directe** ($G_{dir}$) reçue en ligne droite depuis le disque solaire (Ajzoul, s.d.), l'**irradiance diffuse** ($G_{dif}$) renvoyée de toutes parts par la voûte céleste nuageuse ou chargée d'aérosols, et enfin le rayonnement **réfléchi** par le sol, ou albédo ($\\rho_g$). L'irradiance globale reçue sur le plan incliné du panneau ($G_{POA}$) s'écrit ainsi comme la sommation de ces contributions~:",
+                "Au sol, le rayonnement se décompose en trois apports. L'**irradiance directe** ($G_{dir}$) vient en ligne droite du disque solaire (Ajzoul, s.d.). L'**irradiance diffuse** ($G_{dif}$) est renvoyée par toute la voûte céleste, nuageuse ou chargée d'aérosols. Vient enfin le rayonnement **réfléchi** par le sol, dit albédo ($\\rho_g$). Sur le plan incliné du panneau, l'irradiance globale ($G_{POA}$) est la somme de ces trois contributions~:",
             },
             {
               type: 'math',
@@ -153,12 +153,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Matériau de référence pour plus de 90~\\% des cellules mondiales, le **silicium (Si)** possède 4 électrons de valence qui forment un réseau cristallin stable par liaisons covalentes. À l'état pur, il se comporte toutefois comme un isolant à température ambiante.",
+                "Le **silicium (Si)** est le matériau de référence : plus de 90~\\% des cellules mondiales l'utilisent. Ses 4 électrons de valence forment, par liaisons covalentes, un réseau cristallin stable. À l'état pur, il reste pourtant isolant à température ambiante.",
             },
             {
               type: 'text',
               content:
-                "La théorie des bandes distingue la **bande de valence** (presque pleine à basse température) de la **bande de conduction** (où les électrons libres assurent le transport du courant). Entre les deux s'étend la **bande interdite** ($E_g \\approx 1{,}12$~eV à 300~K pour le silicium) (Ajzoul, s.d. ; Diouf, 2021). Lorsqu'un photon d'énergie supérieure à $E_g$ frappe le matériau, il excite un électron de la bande de valence vers la bande de conduction.",
+                "La théorie des bandes distingue la **bande de valence** (presque pleine à basse température) de la **bande de conduction** (où les électrons libres transportent le courant). Entre les deux s'étend la **bande interdite** ($E_g \\approx 1{,}12$~eV à 300~K pour le silicium) (Ajzoul, s.d. ; Diouf, 2021). Un photon d'énergie supérieure à $E_g$ excite alors un électron de la bande de valence vers la bande de conduction.",
             },
             {
               type: 'table',
@@ -182,12 +182,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Pour rendre le silicium conducteur, on réalise un **dopage** en y introduisant des impuretés contrôlées. Le **type N (donneur)** s'obtient par l'ajout d'éléments à cinq électrons (comme le phosphore) pour libérer des charges négatives excédentaires, tandis que le **type P (accepteur)** fait appel à des éléments à trois électrons (comme le bore) pour générer des lacunes mobiles, appelées trous.",
+                "Pour rendre le silicium conducteur, on y introduit des impuretés contrôlées : c'est le **dopage**. Le **type N (donneur)** s'obtient en ajoutant des éléments à cinq électrons (le phosphore, par exemple), qui libèrent des charges négatives excédentaires. Le **type P (accepteur)** utilise des éléments à trois électrons (le bore), qui génèrent des lacunes mobiles dites trous.",
             },
             {
               type: 'text',
               content:
-                "La mise en contact intime de ces deux matériaux engendre la **jonction PN**. Au voisinage de l'interface, la diffusion des porteurs de charge crée une zone d'appauvrissement exempte de charges libres, dite zone de déplétion, qui donne naissance à un **champ électrique interne**. Ce champ joue un rôle moteur indispensable en agissant comme une barrière naturelle et un séparateur de charges.",
+                "Ces deux matériaux, mis en contact, forment la **jonction PN**. Près de l'interface, les porteurs de charge diffusent et créent une zone dépourvue de charges libres, la zone de déplétion. Elle engendre un **champ électrique interne**, qui fait office de barrière naturelle et sépare les charges.",
             },
             {
               type: 'figure',
@@ -205,7 +205,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La conversion de la lumière en électricité s'opère à travers un enchaînement de processus physiques continus. Tout d'abord, l'**absorption** des photons incidents par le semi-conducteur insuffle l'énergie nécessaire à la **génération** de paires électron--trou. Sous l'action du champ électrique inhérent à la jonction PN, ces porteurs subissent une **séparation** spatiale immédiate qui prévient leur recombinaison précoce (Ajzoul, s.d.). Enfin, la **collecte** de ces charges par les contacts métalliques frontaux et arrière alimente le circuit extérieur sous forme de courant continu (Ajzoul, s.d. ; Toumi, 2021).",
+                "La conversion de la lumière en électricité enchaîne quatre processus. D'abord, le semi-conducteur **absorbe** les photons incidents ; leur énergie **génère** des paires électron--trou. Le champ de la jonction PN **sépare** aussitôt ces porteurs et prévient leur recombinaison précoce (Ajzoul, s.d.). Enfin, les contacts métalliques avant et arrière **collectent** ces charges et alimentent le circuit en courant continu (Ajzoul, s.d. ; Toumi, 2021).",
             },
             {
               type: 'figure',
@@ -225,7 +225,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Comme établi au Chapitre~2, la production d'une centrale photovoltaïque dépend conjointement de cycles déterministes et de perturbations stochastiques. Du point de vue de la modélisation, la variabilité déterministe et prévisible liée à la mécanique céleste (cycles journalier et saisonnier), directement intégrée via les éphémérides et les composantes géométriques ($\\cos\\theta_i$), se distingue de l'incertitude stochastique provoquée par la dynamique atmosphérique (passages nuageux rapides, épisodes d'harmattan et dépôt de poussières $\\tau_a$). La valeur ajoutée des modèles d'apprentissage profond réside sur cette seconde composante, par nature imprévisible.",
+            "La production d'une centrale photovoltaïque mêle deux composantes. La première est **déterministe** : elle suit la mécanique céleste — cycles journalier et saisonnier — et s'intègre par les éphémérides et la géométrie du panneau ($\\cos\\theta_i$). La seconde est **stochastique** : elle vient de l'atmosphère — passages nuageux rapides, épisodes d'harmattan, dépôt de poussières $\\tau_a$ — et reste imprévisible. C'est sur cette seconde composante que les modèles d'apprentissage profond apportent leur valeur.",
         },
         {
           type: 'figure',
@@ -242,7 +242,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Afin d'éviter le surapprentissage et de garantir l'explicabilité des modèles (notamment via les mécanismes d'attention temporelle et de sélection de variables propres au modèle TFT (Lim, 2021)), l'ensemble des grandeurs mesurées ou calculées sur le site de Diass (23~MWc) a été regroupé au sein d'un dictionnaire structuré présenté dans le tableau ci-dessous.",
+            "Les grandeurs mesurées ou calculées sur le site de Diass (23~MWc) sont regroupées dans le dictionnaire structuré ci-dessous. Ce référentiel limite le surapprentissage et préserve l'explicabilité des modèles, en particulier grâce aux mécanismes d'attention temporelle et de sélection de variables du TFT (Lim, 2021).",
         },
         {
           type: 'table',
@@ -329,7 +329,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "En ramenant l'ensemble des grandeurs physiques, électriques et temporelles à un référentiel unifié et rigoureusement structuré, ce chapitre relie les phénomènes d'intermittence observés sur le terrain aux exigences de la modélisation statistique. Chaque entrée transmise au modèle de prévision correspond ainsi à un phénomène physique clairement identifiable, ce qui garantit la transparence et l'exploitabilité opérationnelle des résultats pour le gestionnaire du réseau (SENELEC) (SENELEC, 2025).",
+            "Le rendement d'un module se joue à trois niveaux : le rayonnement reçu, la géométrie de l'installation et la qualité du semi-conducteur. Au sol, ce rayonnement utile combine trois composantes — directe, diffuse et réfléchie par le sol — dont la somme donne l'irradiance dans le plan des modules. La hauteur et l'azimut du Soleil déterminent l'angle d'incidence, donc la part de rayonnement direct effectivement captée. Les suiveurs solaires exploitent exactement cet effet.\n\nCôté matériau, la bande interdite du silicium (1,12~eV) et la jonction PN décident quels photons sont absorbés, et comment les porteurs de charge sont séparés puis collectés aux contacts. L'analyse de la variabilité sépare ensuite deux contributions : celle du mouvement des astres, calculable par éphémérides, et celle de l'atmosphère, faite de nuages, d'harmattan et de poussières. La seconde échappe au calcul ; c'est elle que les modèles d'apprentissage profond doivent apprendre, à partir du référentiel présenté en fin de chapitre.",
         },
       ],
     },

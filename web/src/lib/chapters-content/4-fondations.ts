@@ -5,7 +5,7 @@ export const chapterContent: ChapterData = {
   title: "Fondations de l'apprentissage supervisé et régularisation",
   part: 'Partie II — Modélisation et deep learning',
   intro:
-    "Ce chapitre fixe les notions théoriques que mobilisent les chapitres suivants : le neurone artificiel et le perceptron multicouche, les fonctions d'activation et de coût, l'optimisation par descente de gradient et rétropropagation, les schémas de régularisation, enfin le protocole d'évaluation. Les développements historiques (perceptron de Rosenblatt, régression logistique, classification multi-classe) restent à l'écart : aucune des architectures évaluées aux chapitres~5 à~8 ne les réactive. L'ambition est de fournir un socle opérationnel, non un panorama.",
+    "Ce chapitre pose les notions que mobilisent les chapitres suivants : le neurone artificiel et le perceptron multicouche, les fonctions d'activation et de coût, la descente de gradient et la rétropropagation, les schémas de régularisation, enfin le protocole d'évaluation. Il laisse de côté les développements historiques — perceptron de Rosenblatt, régression logistique, classification multi-classe — qu'aucune des architectures évaluées aux chapitres~5 à~8 ne réactive. Objectif : un socle opérationnel, pas un panorama.",
   sections: [
     {
       type: 'figure',
@@ -25,7 +25,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le point de départ est la régression linéaire. Pour un jeu de $N$ observations $(x_i,y_i)$, on cherche $a$ et $b$ minimisant la somme des carrés des écarts",
+                "Le point de départ est la régression linéaire. Sur un jeu de $N$ observations $(x_i,y_i)$, on cherche $a$ et $b$ qui minimisent la somme des carrés des écarts",
             },
             {
               type: 'math',
@@ -35,7 +35,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Géométriquement, $f$ définit un paraboloïde dont les lignes de niveau sont des ellipses d'autant plus allongées que le conditionnement $\\kappa = \\lambda_{\\max}/\\lambda_{\\min}$ de la Hessienne est grand. Cette anisotropie, illustrée à la figure ci-dessous, annonce la difficulté qui traverse tout le chapitre : dans une vallée étroite, la descente de gradient oscille transversalement et progresse lentement le long de l'axe utile. C'est précisément cette observation qui motivera les optimiseurs adaptatifs de la section consacrée à l'optimisation.",
+                "Géométriquement, $f$ est un paraboloïde : ses lignes de niveau sont des ellipses d'autant plus étirées que le conditionnement $\\kappa = \\lambda_{\\max}/\\lambda_{\\min}$ de la Hessienne est grand. Cette anisotropie, illustrée figure ci-dessous, annonce la difficulté qui court tout au long du chapitre. Dans une vallée étroite, la descente de gradient oscille transversalement et avance lentement le long de l'axe utile. C'est cette observation qui motivera les optimiseurs adaptatifs de la section sur l'optimisation.",
             },
             {
               type: 'figure',
@@ -47,7 +47,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La généralisation à $p$ variables suit immédiatement. Avec $\\hat{y} = Wx + b$, annuler le gradient conduit aux équations normales $W = (X^\\top X)^{-1}X^\\top Y$.",
+                "La généralisation à $p$ variables suit sans mal : avec $\\hat{y} = Wx + b$, annuler le gradient donne les équations normales $W = (X^\\top X)^{-1}X^\\top Y$.",
             },
           ],
         },
@@ -58,7 +58,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Un neurone artificiel généralise cette forme en intercalant une transformation non linéaire $\\varphi$ entre la combinaison linéaire et la sortie :",
+                "Le neurone artificiel garde cette forme, mais intercale une transformation non linéaire $\\varphi$ entre la combinaison linéaire et la sortie :",
             },
             {
               type: 'math',
@@ -68,7 +68,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La frontière de décision reste l'hyperplan $z=0$ ; $\\varphi$ n'en modifie que la transition. Le produit scalaire $Wx$ s'interprète comme une mesure de similarité entre l'entrée et le motif encodé par les poids. Le biais s'absorbe en posant $x_0=1$, ce qui permet d'écrire $\\hat{y}=\\varphi(W'x')$ avec $x'\\in\\mathbb{R}^{p+1}$, convention systématiquement retenue en pratique (figure ci-dessous).",
+                "La frontière de décision reste l'hyperplan $z=0$ ; $\\varphi$ ne change que la transition autour. Le produit scalaire $Wx$ mesure la similarité entre l'entrée et le motif encodé par les poids. On absorbe le biais en posant $x_0=1$, ce qui donne $\\hat{y}=\\varphi(W'x')$ avec $x'\\in\\mathbb{R}^{p+1}$, la convention retenue en pratique (figure ci-dessous).",
             },
             {
               type: 'figure',
@@ -80,7 +80,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Pour un lot de $n$ exemples, la forme matricielle s'écrit $\\hat{Y} = \\varphi(WX + b\\mathbb{1}^\\top)$ : un seul produit matriciel réalise $q\\times n$ produits scalaires en parallèle, ce qui explique l'adéquation de ces modèles aux processeurs graphiques. Si $\\varphi$ est linéaire, la composition de plusieurs couches se réduit à un produit matriciel unique. La non-linéarité n'est donc pas un raffinement : c'est la condition d'existence du deep learning.",
+                "Pour un lot de $n$ exemples, la forme matricielle est $\\hat{Y} = \\varphi(WX + b\\mathbb{1}^\\top)$ : un seul produit matriciel calcule $q\\times n$ produits scalaires en parallèle. D'où l'adéquation de ces modèles aux processeurs graphiques. Si $\\varphi$ est linéaire, enchaîner les couches revient à un unique produit matriciel. La non-linéarité n'est donc pas un raffinement : c'est la condition d'existence du deep learning.",
             },
           ],
         },
@@ -91,7 +91,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le perceptron multicouche répond à une limite structurelle du modèle linéaire, que résume le problème du XOR : les classes $\\{(0,0),(1,1)\\}$ et $\\{(0,1),(1,0)\\}$ ne sont séparables par aucune droite, si bien qu'un neurone isolé ne peut les distinguer (figure ci-dessous). L'empilement de couches et l'intercalation de non-linéarités permettent de construire de telles frontières de décision non linéaires.",
+                "Le perceptron multicouche répond à une limite structurelle du modèle linéaire, que résume le problème du XOR : les classes $\\{(0,0),(1,1)\\}$ et $\\{(0,1),(1,0)\\}$ ne sont séparables par aucune droite, donc un neurone isolé ne peut pas les distinguer (figure ci-dessous). Empiler les couches et alterner les non-linéarités permet de tracer de telles frontières.",
             },
             {
               type: 'figure',
@@ -103,7 +103,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "L'empilement des couches produit le perceptron multicouche (MLP). Pour $\\ell=1,\\dots,L$ :",
+                "C'est ainsi que naît le perceptron multicouche (MLP). Pour $\\ell=1,\\dots,L$ :",
             },
             {
               type: 'math',
@@ -113,7 +113,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le vecteur $\\mathbf{h}^{(\\ell)}$ constitue une représentation interne des données. L'intérêt de la profondeur est hiérarchique : les premières couches détectent des motifs simples, les suivantes les combinent en structures plus abstraites. À capacité égale, un réseau profond nécessite généralement moins de paramètres qu'un réseau large pour approximer une même fonction.",
+                "Le vecteur $\\mathbf{h}^{(\\ell)}$ est une représentation interne des données. La profondeur sert à hiérarchiser : les premières couches repèrent des motifs simples, les suivantes les assemblent en structures plus abstraites. À capacité égale, un réseau profond atteint en général la même fonction avec moins de paramètres qu'un réseau large.",
             },
             {
               type: 'figure',
@@ -124,7 +124,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Un résultat classique justifie a posteriori cette architecture : toute fonction continue sur un compact peut être approximée à précision arbitraire par un réseau à une seule couche cachée suffisamment large (Cybenko, 1989 ; Hornik, 1991). Le théorème ne dit rien sur la généralisation ni sur la facilité d'apprentissage : la profondeur reste utile en pratique, non pour la capacité de représentation, mais pour l'efficacité statistique.",
+                "Un théorème classique valide a posteriori cette architecture : toute fonction continue sur un compact peut être approximée à précision arbitraire par un réseau à une seule couche cachée suffisamment large (Cybenko, 1989 ; Hornik, 1991). Mais le théorème ne dit rien de la généralisation ni de la difficulté d'apprentissage. La profondeur reste utile en pratique pour l'efficacité statistique, pas pour la capacité de représentation.",
             },
           ],
         },
@@ -135,7 +135,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La stabilité de l'entraînement des réseaux profonds repose sur trois mécanismes complémentaires. La Batch Normalization (Ioffe, 2015) normalise les activations par mini-batch, ce qui lisse le paysage de la perte et autorise des taux d'apprentissage plus élevés. Le Dropout (Srivastava, 2014) désactive aléatoirement chaque neurone avec probabilité $p$, forçant le réseau à ne pas dépendre d'une unité particulière. Les initialisations Xavier/Glorot ($\\mathcal{N}(0, 2/(n_{\\text{in}}+n_{\\text{out}}))$) et He/Kaiming ($\\mathcal{N}(0, 2/n_{\\text{in}})$) préservent la variance des activations à travers les couches, He doublant la variance pour compenser la moitié des neurones annulés par ReLU. Ces trois leviers sont réexaminés dans la section consacrée à la régularisation, sous l'angle de la régularisation.",
+                "La stabilité de l'entraînement repose sur trois mécanismes complémentaires. La Batch Normalization (Ioffe, 2015) normalise les activations par mini-batch : le paysage de la perte s'adoucit et l'on peut viser des taux d'apprentissage plus élevés. Le Dropout (Srivastava, 2014) désactive chaque neurone avec probabilité $p$ et empêche le réseau de dépendre d'une unité particulière. Les initialisations Xavier/Glorot ($\\mathcal{N}(0, 2/(n_{\\text{in}}+n_{\\text{out}}))$) et He/Kaiming ($\\mathcal{N}(0, 2/n_{\\text{in}})$) préservent la variance des activations d'une couche à l'autre ; He double la variance pour compenser la moitié des neurones annulés par ReLU. On revient sur ces trois leviers dans la section régularisation.",
             },
           ],
         },
@@ -148,11 +148,11 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Le choix de l'activation détermine la dynamique du gradient. Sigmoïde et tanh, historiquement dominantes, souffrent d'un gradient maximal borné ($0{,}25$ et $1{,}0$ respectivement). Dans un réseau de $L$ couches, le gradient est multiplié par un produit de $L$ facteurs inférieurs à $1$ : c'est le *vanishing gradient*, analysé dans la section consacrée aux gradients qui s'annulent ou explosent.",
+            "L'activation commande la dynamique du gradient. Sigmoïde et tanh, longtemps dominantes, ont un gradient maximal borné : $0{,}25$ et $1{,}0$ respectivement. Dans un réseau de $L$ couches, le gradient est multiplié par un produit de $L$ facteurs inférieurs à $1$ : c'est le *vanishing gradient*, analysé dans la section consacrée aux gradients qui s'annulent ou explosent.",
         },
         {
           type: 'text',
-          content: "ReLU (LeCun, 2015) lève cette limitation en adoptant un gradient constant de $1$ pour $z>0$ :",
+          content: "ReLU (LeCun, 2015) lève cette limite avec un gradient constant, $1$ pour $z>0$ :",
         },
         {
           type: 'math',
@@ -162,7 +162,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Trois propriétés expliquent son succès : gradient non atténué dans la région active, coût de calcul négligeable, sparsité naturelle (environ la moitié des neurones s'annulent). Sa faiblesse, le *dying ReLU*, apparaît lorsqu'un neurone reste définitivement dans la zone négative. Les variantes LeakyReLU, ELU, GELU et Swish atténuent ce problème. GELU et Swish sont aujourd'hui standard dans les Transformers, et GELU équipe le TFT du chapitre~6.",
+            "Trois avantages expliquent son succès : gradient non atténué dans la région active, coût de calcul négligeable, sparsité naturelle (environ la moitié des neurones s'annulent). Sa faiblesse est le *dying ReLU* : un neurone qui reste définitivement dans la zone négative ne s'en relève pas. Les variantes LeakyReLU, ELU, GELU et Swish atténuent ce problème. GELU et Swish sont aujourd'hui standard dans les Transformers, et GELU équipe le TFT du chapitre~6.",
         },
         {
           type: 'table',
@@ -181,7 +181,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "La couche de sortie suit la même logique : identité pour une régression scalaire, sigmoïde pour une probabilité binaire, softmax pour une distribution sur $q$ classes :",
+            "La couche de sortie suit la même règle : identité pour une régression scalaire, sigmoïde pour une probabilité binaire, softmax pour une distribution sur $q$ classes :",
         },
         {
           type: 'math',
@@ -202,12 +202,12 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Entraîner un réseau revient à minimiser une fonction de coût qui traduit l'écart entre prédiction et vérité en un scalaire *différentiable* : c'est elle, et non la métrique, qui pilote la descente de gradient. Les métriques d'évaluation, mesurées sur un jeu de test indépendant, jugent la qualité des prévisions ; libres de toute contrainte de dérivabilité, elles expriment l'écart en des termes interprétables pour l'exploitant. Le pipeline `deep_aero_sn` rapporte deux familles de métriques : les *déterministes*, pour la prévision ponctuelle (souvent la médiane prédite), et les *probabilistes*, pour les intervalles de confiance.",
+            "Entraîner un réseau, c'est minimiser une fonction de coût qui traduit l'écart entre prédiction et vérité en un scalaire *différentiable* : c'est elle, et non la métrique, qui pilote la descente de gradient. Les métriques d'évaluation, elles, se mesurent sur un jeu de test indépendant ; libres de toute contrainte de dérivabilité, elles expriment l'écart en des termes interprétables pour l'exploitant. Le pipeline `deep_aero_sn` rapporte deux familles : les *déterministes*, pour la prévision ponctuelle (souvent la médiane prédite), et les *probabilistes*, pour les intervalles de confiance.",
         },
         {
           type: 'text',
           content:
-            "Les pertes effectivement optimisées sont peu nombreuses. En prévision ponctuelle, il s'agit de l'erreur quadratique moyenne $\\mathrm{MSE}(\\hat{y},y)=\\frac{1}{n}\\sum_{i=1}^{n}(\\hat{y}_i-y_i)^2$, dérivable et sensible aux grands écarts. En prévision probabiliste, il s'agit de la perte pinball, qui évalue un quantile $q$ :",
+            "Le nombre de pertes réellement optimisées est réduit. En prévision ponctuelle, c'est l'erreur quadratique moyenne $\\mathrm{MSE}(\\hat{y},y)=\\frac{1}{n}\\sum_{i=1}^{n}(\\hat{y}_i-y_i)^2$, dérivable et sensible aux grands écarts. En prévision probabiliste, c'est la perte pinball, qui évalue un quantile $q$ :",
         },
         {
           type: 'math',
@@ -217,7 +217,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "et se réduit à l'erreur absolue pour $q=0{,}5$. Le pipeline combine ces deux objectifs par la perte hybride donnée en fin de section.",
+            "Pour $q=0{,}5$, elle se réduit à l'erreur absolue. Le pipeline combine ces deux objectifs par la perte hybride donnée en fin de section.",
         },
         {
           type: 'text',
@@ -236,7 +236,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Elle exprime l'erreur moyenne dans l'unité de la cible : une MAE de $0{,}5$~MW signifie que la prévision s'en écarte de $0{,}5$~MW en moyenne. Ne pénalisant pas davantage les grandes erreurs, elle reste robuste aux extrêmes mais masque une défaillance concentrée sur quelques points.",
+            "Elle se lit dans l'unité de la cible : une MAE de $0{,}5$~MW signifie que la prévision s'en écarte de $0{,}5$~MW en moyenne. Comme elle ne pénalise pas davantage les grandes erreurs, elle reste robuste aux extrêmes, mais masque une défaillance concentrée sur quelques points.",
         },
         {
           type: 'text',
@@ -250,7 +250,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Le carré donne un poids accru aux grandes erreurs, car un écart de 3~MW contribue neuf fois plus qu'un écart de 1~MW ; d'où sa sensibilité aux pics mal prévus (passages nuageux brusques, couverture surestimée) et son statut de métrique de référence pour les applications réseau, où les écarts extrêmes coûtent cher.",
+            "Le carré pèse d'autant plus lourd que l'erreur grandit : un écart de 3~MW contribue neuf fois plus qu'un écart de 1~MW. D'où la sensibilité de la RMSE aux pics mal prévus (passages nuageux brusques, couverture surestimée) et son statut de métrique de référence pour les applications réseau, où les écarts extrêmes coûtent cher.",
         },
         {
           type: 'text',
@@ -264,7 +264,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Elle reste toutefois *indéfinie* dès qu'une observation est nulle, cas permanent en photovoltaïque (nuit, panne) : la division par une valeur proche de zéro produirait des erreurs astronomiques et non informatives. Le pipeline ne calcule donc la MAPE que sur les points dépassant un seuil relatif $\\varepsilon = \\max\\!\\left(10^{-6},\\ 0{,}05 \\cdot \\text{médiane}(|y|)\\right)$ ; si aucun ne passe le seuil (séquence entièrement nocturne), il bascule sur la **sMAPE**, bornée par 200~\\% :",
+            "Reste qu'elle est *indéfinie* dès qu'une observation est nulle, cas permanent en photovoltaïque (nuit, panne) : la division par une valeur proche de zéro produirait des erreurs astronomiques et non informatives. Le pipeline ne calcule donc la MAPE que sur les points dépassant un seuil relatif $\\varepsilon = \\max\\!\\left(10^{-6},\\ 0{,}05 \\cdot \\text{médiane}(|y|)\\right)$ ; si aucun point ne passe le seuil (séquence entièrement nocturne), il bascule sur la **sMAPE**, bornée par 200~\\% :",
         },
         {
           type: 'math',
@@ -283,7 +283,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Il mesure la part de variance expliquée relativement au modèle constant $\\bar{y}$. Un $R^2$ de $0{,}877$ (TCN sur Diass) signifie que le modèle réduit de $87{,}7\\,\\%$ l'erreur quadratique du prédicteur naïf. Contrairement à une idée répandue, il peut devenir négatif quand la prévision est pire que la moyenne, comme l'illustre la persistance sur les séries très variables ; ce comportement constitue en soi un signal diagnostique.",
+            "Il mesure la part de variance expliquée relativement au modèle constant $\\bar{y}$. Un $R^2$ de $0{,}877$ (TCN sur Diass) signifie que le modèle réduit de $87{,}7\\,\\%$ l'erreur quadratique du prédicteur naïf. Contrairement à une idée reçue, il peut devenir négatif quand la prévision est pire que la moyenne : la persistance l'illustre sur les séries très variables. Ce comportement est en soi un signal diagnostique.",
         },
         {
           type: 'text',
@@ -298,12 +298,12 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "le terme $10^{-8}$ écartant la division par zéro. En rapportant l'erreur à l'étendue des valeurs, cette normalisation autorise la comparaison entre sites de puissances ou horizons différents, là où la RMSE brute dépend de l'échelle de la centrale ; c'est la métrique employée au chapitre~7 pour comparer les architectures.",
+            "le terme $10^{-8}$ écarte la division par zéro. En rapportant l'erreur à l'étendue des valeurs, on peut comparer des sites de puissances ou des horizons différents, là où la RMSE brute suit l'échelle de la centrale ; c'est la métrique du chapitre~7 pour comparer les architectures.",
         },
         {
           type: 'text',
           content:
-            "**Couverture.** La **couverture** est la proportion d'observations tombant dans l'intervalle :",
+            "**Couverture.** La **couverture** compte la part d'observations tombant dans l'intervalle :",
         },
         {
           type: 'math',
@@ -313,12 +313,12 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Pour des quantiles $q=0{,}1$ et $q=0{,}9$, la couverture attendue vaut $80\\,\\%$ : plus le modèle s'en approche, plus le niveau de confiance annoncé est honnête. Sur Diass, le TCN atteint $79{,}8\\,\\%$ contre $74{,}2\\,\\%$ pour le TFT (chapitre~8).",
+            "Avec $q=0{,}1$ et $q=0{,}9$, la couverture attendue vaut $80\\,\\%$ : plus le modèle s'en approche, plus l'intervalle mérite la confiance qu'il affiche. Sur Diass, le TCN atteint $79{,}8\\,\\%$ contre $74{,}2\\,\\%$ pour le TFT (chapitre~8).",
         },
         {
           type: 'text',
           content:
-            "**Largeur d'intervalle.** La **largeur moyenne** moyenne la largeur de l'intervalle :",
+            "**Largeur d'intervalle.** La **largeur moyenne** mesure l'écart entre les deux bornes de l'intervalle :",
         },
         {
           type: 'math',
@@ -328,7 +328,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "À couverture égale, un intervalle plus étroit est préférable : il traduit une incertitude mieux maîtrisée, donc des prévisions plus utiles.",
+            "À couverture égale, l'intervalle étroit l'emporte : il traduit une incertitude mieux maîtrisée, donc des prévisions plus utiles.",
         },
         {
           type: 'text',
@@ -343,7 +343,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "où $\\Delta_i$ est nul si $y_i$ appartient à l'intervalle, et vaut sinon la distance de $y_i$ à la borne la plus proche. À la différence de la seule couverture, ce score punit les intervalles trop larges comme les sorties de borne, offrant un compromis unique entre finesse et honnêteté.",
+            "$\\Delta_i$ est nul si $y_i$ appartient à l'intervalle ; sinon, il vaut la distance de $y_i$ à la borne la plus proche. À la différence de la seule couverture, ce score punit les intervalles trop larges comme les sorties de borne : un seul chiffre arbitre entre finesse et honnêteté.",
         },
         {
           type: 'text',
@@ -358,7 +358,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Cette formulation, centrale pour le chapitre~7, n'est rappelée ici que pour mémoire : elle est analysée dans son contexte applicatif.",
+            "Cette formulation, centrale pour le chapitre~7, n'apparaît ici que pour mémoire : elle sera analysée dans son contexte applicatif.",
         },
       ],
     },
@@ -383,12 +383,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Selon la taille du lot utilisée à chaque mise à jour, on distingue trois régimes : le batch complet (gradient exact, coût prohibitif), le SGD pur (un exemple par mise à jour, forte variance) et le mini-batch, standard en pratique, dont le bruit agit comme une régularisation implicite en favorisant les minima plats. Le taux d'apprentissage $\\eta$ est l'hyperparamètre le plus critique ; les schedules usuels vont du step decay au cosine annealing, jusqu'au warmup suivi d'un decay, standard pour les Transformers et utilisé par le TFT.",
+                "La taille du lot utilisée à chaque mise à jour définit trois régimes : le batch complet (gradient exact, coût prohibitif), le SGD pur (un exemple par mise à jour, forte variance) et le mini-batch, standard en pratique, dont le bruit agit comme une régularisation implicite en favorisant les minima plats. Le taux d'apprentissage $\\eta$ reste l'hyperparamètre le plus critique ; les schedules usuels vont du step decay au cosine annealing, jusqu'au warmup suivi d'un decay, standard pour les Transformers et utilisé par le TFT.",
             },
             {
               type: 'text',
               content:
-                "Sur une fonction quadratique, la convergence est garantie si $\\eta < 2/\\lambda_{\\max}$, avec un nombre d'itérations en $\\mathcal{O}(\\kappa\\log(1/\\varepsilon))$. En grande dimension non convexe, les mauvais minima locaux sont rares ; les difficultés réelles sont les points-selles et les plateaux, que le bruit du mini-batch aide à traverser.",
+                "Sur une fonction quadratique, la convergence est garantie si $\\eta < 2/\\lambda_{\\max}$, avec un nombre d'itérations en $\\mathcal{O}(\\kappa\\log(1/\\varepsilon))$. En grande dimension non convexe, les mauvais minima locaux sont rares : les vrais obstacles sont les points-selles et les plateaux, que le bruit du mini-batch aide à traverser.",
             },
           ],
         },
@@ -399,7 +399,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La rétropropagation (LeCun, 1989) calcule $\\nabla_\\theta \\mathcal{L}$ en appliquant la règle de la chaîne de la sortie vers l'entrée, en $\\mathcal{O}(D)$ opérations, soit la même complexité que la passe avant. En notant $\\delta^{(\\ell)} = \\partial \\mathcal{L}/\\partial \\mathbf{z}^{(\\ell)}$, la récurrence s'écrit",
+                "La rétropropagation (LeCun, 1989) calcule $\\nabla_\\theta \\mathcal{L}$ en appliquant la règle de la chaîne de la sortie vers l'entrée, en $\\mathcal{O}(D)$ opérations — autant que la passe avant. En notant $\\delta^{(\\ell)} = \\partial \\mathcal{L}/\\partial \\mathbf{z}^{(\\ell)}$, la récurrence s'écrit",
             },
             {
               type: 'math',
@@ -409,12 +409,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le gradient d'un poids est donc le produit externe du signal d'erreur qui remonte et de l'activation qui descend : plus l'activation est grande, plus le poids est ajusté. Cette forme est exactement celle du gradient sigmoïde+BCE ; elle explique aussi pourquoi les activations à gradient borné (sigmoïde, tanh) provoquent le vanishing gradient analysé plus loin.",
+                "Le gradient d'un poids est donc le produit externe du signal d'erreur qui remonte et de l'activation qui descend : plus l'activation est grande, plus le poids est ajusté. Cette forme est exactement celle du gradient sigmoïde+BCE ; elle explique pourquoi les activations à gradient borné (sigmoïde, tanh) provoquent le vanishing gradient analysé plus loin.",
             },
             {
               type: 'text',
               content:
-                "En PyTorch, la rétropropagation est automatisée via l'autograd : `loss.backward()` peuple les accumulateurs `.grad`, qu'il faut remettre à zéro avant chaque itération (`optimizer.zero_grad()`).",
+                "Les bibliothèques calculent ces gradients pour nous : la rétropropagation remplit les accumulateurs de gradient, qu'il faut remettre à zéro avant chaque itération.",
             },
           ],
         },
@@ -425,7 +425,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Momentum accumule une inertie, $v_t = \\beta v_{t-1} + \\nabla_\\theta \\mathcal{L}$, qui amortit les oscillations dans les directions de forte courbure. Adagrad divise le pas par la racine de la somme cumulée des gradients au carré, mais son taux décroît indéfiniment. RMSProp corrige ce défaut par une moyenne mobile. Adam (Kingma, 2015) combine les deux idées avec une correction de biais :",
+                "Momentum accumule une inertie, $v_t = \\beta v_{t-1} + \\nabla_\\theta \\mathcal{L}$, qui amortit les oscillations dans les directions de forte courbure. Adagrad divise le pas par la racine de la somme cumulée des gradients au carré, mais son taux décroît indéfiniment. RMSProp corrige ce défaut par une moyenne mobile. Adam (Kingma, 2015) marie les deux idées avec une correction de biais :",
             },
             {
               type: 'math',
@@ -450,7 +450,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "ce qui évite que la pénalisation $L_2$ soit écrasée par la normalisation adaptative. C'est l'optimiseur retenu pour le TFT, comme indiqué au chapitre~6.",
+                "Cela empêche la normalisation adaptative d'écraser la pénalisation $L_2$. C'est l'optimiseur retenu pour le TFT, comme indiqué au chapitre~6.",
             },
             {
               type: 'table',
@@ -478,7 +478,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "L'erreur totale d'un modèle se décompose en biais$^2$, variance et bruit irréductible. Un biais élevé correspond au sous-apprentissage, une variance élevée au surapprentissage (figure ci-dessous). La régularisation augmente légèrement le biais mais réduit significativement la variance, déplaçant l'optimum vers une complexité plus faible.",
+                "L'erreur totale d'un modèle se décompose en biais$^2$, variance et bruit irréductible. Un biais élevé correspond au sous-apprentissage, une variance élevée au surapprentissage (figure ci-dessous). La régularisation paie un léger surcroît de biais pour une forte baisse de variance : l'optimum se déplace vers une complexité plus faible.",
             },
             {
               type: 'figure',
@@ -504,7 +504,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "modifie le gradient en $\\partial \\mathcal{L}/\\partial W + \\lambda W$, ce qui revient à multiplier les poids par $(1-\\eta\\lambda)$ à chaque pas, d'où le nom *weight decay*. La pénalité $L_1$,",
+                "transforme le gradient en $\\partial \\mathcal{L}/\\partial W + \\lambda W$, ce qui revient à multiplier les poids par $(1-\\eta\\lambda)$ à chaque pas : d'où le nom *weight decay*. La pénalité $L_1$,",
             },
             {
               type: 'math',
@@ -514,7 +514,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "favorise la parcimonie : géométriquement, le losange $L_1$ a ses sommets sur les axes, et la perte atteint typiquement sa première intersection en un point où certains poids sont exactement nuls (figure ci-dessous). Elastic Net combine les deux pour obtenir à la fois parcimonie et stabilité.",
+                "pousse à la parcimonie : géométriquement, le losange $L_1$ a ses sommets sur les axes, et la perte atteint en général sa première intersection en un point où certains poids sont exactement nuls (figure ci-dessous). Elastic Net combine les deux pour obtenir à la fois parcimonie et stabilité.",
             },
             {
               type: 'figure',
@@ -532,7 +532,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le dropout (Srivastava, 2014) désactive aléatoirement chaque neurone avec probabilité $p$ pendant l'entraînement, puis rescale les activations restantes par $1/(1-p)$ pour conserver la magnitude moyenne :",
+                "Le dropout (Srivastava, 2014) désactive chaque neurone avec probabilité $p$ pendant l'entraînement, puis rescale les activations restantes par $1/(1-p)$ pour conserver la magnitude moyenne :",
             },
             {
               type: 'math',
@@ -542,7 +542,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "À l'inférence, tous les neurones sont actifs. L'interprétation bayésienne (Gal \\& Ghahramani, 2016) y voit une approximation de l'inférence sur l'ensemble des sous-réseaux. En pratique, $p=0{,}5$ sur les couches denses, $p=0{,}1$--$0{,}2$ sur la couche d'entrée, et aucun dropout en sortie.",
+                "À l'inférence, tous les neurones sont de nouveau actifs. L'interprétation bayésienne (Gal \\& Ghahramani, 2016) y voit une approximation de l'inférence sur l'ensemble des sous-réseaux. En pratique : $p=0{,}5$ sur les couches denses, $p=0{,}1$--$0{,}2$ sur la couche d'entrée, et aucun dropout en sortie.",
             },
           ],
         },
@@ -553,7 +553,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Quatre variantes se distinguent par l'axe de normalisation. La Batch Normalization normalise par feature sur le mini-batch ; elle dépend donc de la taille de lot et se comporte différemment à l'entraînement et à l'inférence. La Layer Normalization,",
+                "Quatre variantes se distinguent par l'axe qu'elles normalisent. La Batch Normalization le fait par feature sur le mini-batch : elle dépend donc de la taille de lot et se comporte différemment à l'entraînement et à l'inférence. La Layer Normalization,",
             },
             {
               type: 'math',
@@ -563,12 +563,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "normalise par échantillon sur les features, ce qui la rend indépendante du batch, propriété essentielle pour les Transformers qui traitent des séquences de longueur variable. C'est la normalisation utilisée par le TFT et le TCN (chapitre~6). L'Instance Normalization opère par canal et par échantillon, la Group Normalization par groupes de canaux, indépendamment du batch.",
+                "normalise par échantillon, donc indépendante du batch — propriété essentielle pour les Transformers, qui traitent des séquences de longueur variable. C'est la normalisation du TFT et du TCN (chapitre~6). L'Instance Normalization opère par canal et par échantillon, la Group Normalization par groupes de canaux, indépendamment du batch.",
             },
             {
               type: 'text',
               content:
-                "Le débat sur le mécanisme d'action de la BN a été tranché par Santurkar et al. (2018) : elle agit principalement en lissant le paysage de la perte, plutôt qu'en réduisant l'*internal covariate shift*.",
+                "Santurkar et al. (2018) ont tranché le débat sur le mécanisme d'action de la BN : elle agit principalement en lissant le paysage de la perte, plutôt qu'en réduisant l'*internal covariate shift*.",
             },
           ],
         },
@@ -581,12 +581,12 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "La rétropropagation multiplie les gradients couche par couche. Si chaque facteur est inférieur à $1$ en magnitude, comme pour une sigmoïde dont le gradient maximal vaut $0{,}25$, le gradient décroît exponentiellement avec la profondeur : après dix couches, il est multiplié par $0{,}25^{10}\\approx 10^{-6}$, et les couches proches de l'entrée cessent d'apprendre. Le phénomène inverse (facteurs $>1$) fait exploser la perte en NaN.",
+            "La rétropropagation multiplie les gradients couche après couche. Si chaque facteur est inférieur à $1$ en magnitude — le cas de la sigmoïde, dont le gradient maximal vaut $0{,}25$ —, le gradient décroît exponentiellement avec la profondeur : après dix couches, il est multiplié par $0{,}25^{10}\\approx 10^{-6}$, et les couches proches de l'entrée cessent d'apprendre. À l'inverse, des facteurs supérieurs à $1$ font exploser la perte, qui devient non finie.",
         },
         {
           type: 'text',
           content:
-            "Quatre leviers corrigent le vanishing. L'activation ReLU (gradient $\\in\\{0,1\\}$) ne réduit pas le gradient dans sa zone active. Les initialisations de He et Xavier ajustent la variance des poids à la dimension des couches, écartant l'explosion comme l'annulation des activations. Les connexions résiduelles,",
+            "Quatre leviers corrigent le vanishing. L'activation ReLU (gradient $\\in\\{0,1\\}$) ne réduit pas le gradient dans sa zone active. Les initialisations de He et Xavier ajustent la variance des poids à la dimension des couches : ni explosion, ni activations annulées. Les connexions résiduelles,",
         },
         {
           type: 'math',
@@ -596,12 +596,12 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "garantissent un terme identité dans la jacobienne, ce qui empêche le gradient de s'annuler~; c'est ce qui a permis d'entraîner des réseaux à plusieurs centaines de couches (ResNet), et l'on retrouve ce mécanisme dans les blocs résiduels du TCN (chapitre~6). Les LSTM, enfin, résolvent le problème dans les séquences grâce à un canal de mémoire à flux additif $c_t = f_t\\odot c_{t-1} + i_t\\odot\\tilde{c}_t$, plutôt que multiplicatif.",
+            "laissent un terme identité dans la jacobienne : le gradient ne peut pas s'annuler. C'est ce qui a permis d'entraîner des réseaux à plusieurs centaines de couches (ResNet) ; on retrouve le même mécanisme dans les blocs résiduels du TCN (chapitre~6). Les LSTM, eux, règlent le problème dans les séquences : leur canal de mémoire a un flux additif $c_t = f_t\\odot c_{t-1} + i_t\\odot\\tilde{c}_t$, plutôt que multiplicatif.",
         },
         {
           type: 'text',
           content:
-            "Pour l'explosion, la parade est le gradient clipping : si $\\|g\\|>\\tau$, on remplace $g$ par $\\tau g/\\|g\\|$, avec $\\tau=1$ ou $5$. La technique est systématique pour les RNN et les Transformers ; elle est appliquée au TFT du chapitre~6.",
+            "Pour l'explosion, la parade est le gradient clipping : si $\\|g\\|>\\tau$, on remplace $g$ par $\\tau g/\\|g\\|$, avec $\\tau=1$ ou $5$. La technique est systématique pour les RNN et les Transformers ; le TFT du chapitre~6 l'applique.",
         },
         {
           type: 'table',
@@ -627,7 +627,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le découpage standard sépare entraînement (60--80~\\%, ajustement des poids), validation (10--20~\\%, hyperparamètres et early stopping) et test (10--20~\\%, évaluation finale unique). Pour les séries temporelles, l'ordre chronologique est préservé : on ne mélange pas les échantillons, et la normalisation est ajustée sur l'entraînement seul puis gelée. La validation croisée classique cède la place au walk-forward : chaque pli entraîne sur tout le passé disponible et teste sur la fenêtre suivante, ce qui garantit qu'aucune donnée future n'est utilisée (figure ci-dessous).",
+                "Le découpage standard sépare entraînement (60--80~\\%, ajustement des poids), validation (10--20~\\%, hyperparamètres et early stopping) et test (10--20~\\%, évaluation finale unique). Sur une série temporelle, l'ordre chronologique est préservé : on ne mélange pas les échantillons, et la normalisation est ajustée sur l'entraînement seul puis gelée. La validation croisée classique cède donc la place au walk-forward. Chaque pli entraîne sur tout le passé disponible et teste sur la fenêtre suivante : aucune donnée future n'entre en jeu (figure ci-dessous).",
             },
             {
               type: 'figure',
@@ -644,7 +644,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La fuite de données désigne toute contamination de l'évaluation par une information indisponible au moment de la prévision. Elle se rencontre le plus souvent sous l'une de trois formes : ajustement de la normalisation sur l'ensemble complet, sélection de features ou d'hyperparamètres guidée par le test, usage de features construites avec le futur. Cette dernière forme est la plus insidieuse, car elle se dissimule aisément dans une longue liste de colonnes. Les garde-fous du pipeline sont détaillés au chapitre~8, où ils s'appliquent au cas de Diass~: ajustement exclusif du scaler sur l'entraînement, sélection confinée à l'entraînement et à la validation, ingénierie causale excluant automatiquement les dérivées quasi linéaires de la cible.",
+                "La fuite de données, c'est toute contamination de l'évaluation par une information indisponible au moment de la prévision. Elle se rencontre le plus souvent sous l'une de trois formes : ajustement de la normalisation sur l'ensemble complet, sélection de features ou d'hyperparamètres guidée par le test, usage de features construites avec le futur. Cette dernière est la plus insidieuse : elle se dissimule aisément dans une longue liste de colonnes. Le chapitre~8 détaille les garde-fous du pipeline, appliqués au cas de Diass : ajustement exclusif du scaler sur l'entraînement, sélection confinée à l'entraînement et à la validation, ingénierie causale excluant automatiquement les dérivées quasi linéaires de la cible.",
             },
           ],
         },
@@ -655,12 +655,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "L'optimisation des hyperparamètres se heurte à quatre difficultés : structure nichée (chaque évaluation exige un entraînement complet), coût en heures-GPU, espace mixte continu/entier/catégoriel à dépendances conditionnelles, et objectif non lisse. La recherche sur grille devient ingérable au-delà de quatre paramètres ; la recherche aléatoire de Bergstra \\& Bengio (2012) reste une référence lorsque peu de dimensions comptent réellement. Les méthodes modernes se répartissent en quatre familles : optimisation bayésienne, estimateur de Parzen arborescent (TPE), méthodes multi-fidélité (successive halving, Hyperband, ASHA) et méthodes populationnelles (CMA-ES, PBT). Franceschi et al. (2024) en donnent une synthèse.",
+                "L'optimisation des hyperparamètres se heurte à quatre difficultés : structure nichée (chaque évaluation exige un entraînement complet), coût en heures-GPU, espace mixte continu/entier/catégoriel à dépendances conditionnelles, objectif non lisse. La recherche sur grille devient ingérable au-delà de quatre paramètres ; la recherche aléatoire de Bergstra \\& Bengio (2012) reste une référence quand peu de dimensions comptent réellement. Les méthodes modernes tiennent en quatre familles : optimisation bayésienne, estimateur de Parzen arborescent (TPE), méthodes multi-fidélité (successive halving, Hyperband, ASHA) et méthodes populationnelles (CMA-ES, PBT). Franceschi et al. (2024) en donnent une synthèse.",
             },
             {
               type: 'text',
               content:
-                "Ce travail retient Optuna, avec un échantillonneur TPE et un élagage médian. La perte minimisée est la perte hybride MSE+pinball (présentée plus haut), et les essais sont journalisés dans MLflow pour assurer la traçabilité des configurations. Le détail de la recherche, les valeurs retenues pour Diass et les résultats comparés figurent au chapitre~8.",
+                "Ce travail retient Optuna, avec un échantillonneur TPE et un élagage médian. On minimise la perte hybride MSE+pinball (présentée plus haut), et les essais sont journalisés dans MLflow pour garder la trace des configurations. Le détail de la recherche, les valeurs retenues pour Diass et les résultats comparés figurent au chapitre~8.",
             },
           ],
         },
@@ -671,9 +671,20 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "On surveille la perte de validation et l'on arrête l'entraînement lorsqu'elle cesse de décroître, typiquement après une patience de 5 à 20 époques, en restaurant les poids du meilleur point. Ce mécanisme est utilisé pour tous les modèles du chapitre~8, avec une patience de 25 époques pour le TCN et le TFT.",
+                "On surveille la perte de validation et l'on arrête l'entraînement dès qu'elle cesse de décroître, après une patience de 5 à 20 époques typiques, en restaurant les poids du meilleur point. Tous les modèles du chapitre~8 utilisent ce mécanisme, avec une patience de 25 époques pour le TCN et le TFT.",
             },
           ],
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Conclusion',
+      blocks: [
+        {
+          type: 'text',
+          content:
+            "Parti de la régression linéaire, ce chapitre a montré pourquoi un empilement de couches non linéaires représente des relations qu'un modèle linéaire laisse de côté, le problème du XOR en étant l'illustration la plus simple. Les fonctions d'activation conditionnent la propagation du gradient ; les fonctions de coût traduisent l'objectif visé (erreur quadratique pour la valeur centrale, pinball pour les quantiles) ; les métriques (MAE, RMSE, $R^2$, NRMSE, couverture, largeur, score de Winkler) comparent les modèles sur un jeu de test indépendant. L'optimisation part de la descente de gradient et va jusqu'aux optimiseurs adaptatifs : la rétropropagation calcule les gradients, Adam ou AdamW conduisent l'entraînement.\n\nLa régularisation (pénalités $L_1$ et $L_2$, dropout, normalisation) contient la variance sans amputer la capacité du modèle. L'analyse du vanishing et de l'exploding gradient justifie les choix techniques qui reviendront dans les chapitres suivants : ReLU, initialisations de He et Xavier, connexions résiduelles, LSTM et gradient clipping.\n\nLe protocole d'évaluation fixe les conditions de comparaison : découpage chronologique, validation walk-forward, prévention des fuites de données, optimisation des hyperparamètres par Optuna, journalisation MLflow et arrêt anticipé. Ce sont ces règles qui s'appliquent au cas de Diass.",
         },
       ],
     },

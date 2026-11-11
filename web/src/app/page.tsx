@@ -1,6 +1,8 @@
 
 import Link from 'next/link'
 import VideoBlock from '@/components/VideoBlock'
+import ThemeToggle from '@/components/ThemeToggle'
+import LangToggle from '@/components/LangToggle'
 import { asset } from '@/lib/paths'
 
 function SectionHeading({
@@ -55,37 +57,37 @@ const objectives = [
 const memoirBlocks = [
   {
     num: '01',
-    title: 'Contexte et transition énergétique',
+    title: 'Cadre de la transition énergétique au Sénégal et présentation des sites',
     desc: 'Le système électrique sénégalais, les énergies renouvelables et le contexte du site étudié.',
     href: '/chapitres/1-transition/',
   },
   {
     num: '02',
-    title: 'Physique du photovoltaïque',
+    title: 'Physique et technologie photovoltaïque',
     desc: 'Irradiance, température, vent, conversion électrique et encrassement des modules.',
     href: '/chapitres/2-physique/',
   },
   {
     num: '03',
-    title: 'Fondements du deep learning',
+    title: 'Fondations de l\'apprentissage supervisé et régularisation',
     desc: 'Séries temporelles, réseaux convolutifs, réseaux récurrents et mécanismes d’attention.',
     href: '/chapitres/4-fondations/',
   },
   {
     num: '04',
-    title: 'Architectures candidates',
+    title: 'Architectures avancées appliquées',
     desc: 'Réseaux convolutifs temporels (TCN) et Temporal Fusion Transformer (TFT).',
     href: '/chapitres/6-architectures/',
   },
   {
     num: '05',
-    title: 'Prévision probabiliste',
+    title: 'Stratégie MIMO et prévision probabiliste par quantiles',
     desc: 'Prévision multi-horizon, quantiles P10/P50/P90, fonctions de perte et calibration.',
     href: '/chapitres/7-strategies/',
   },
   {
     num: '06',
-    title: 'Étude de cas : Diass',
+    title: 'Étude de cas : Diass (solaire)',
     desc: 'Protocole expérimental, évaluation des modèles et analyse des résultats.',
     href: '/chapitres/8-etudes-cas/',
   },
@@ -128,6 +130,8 @@ export default function Home() {
               ))}
             </nav>
 
+            <ThemeToggle />
+            <LangToggle />
             <img
               src={asset('/images/senelecLogo.png')}
               alt="SENELEC"
@@ -430,8 +434,6 @@ export default function Home() {
                 />
                 <figcaption className="mt-3 max-w-3xl text-xs leading-relaxed text-db-muted">
                   Évolution temporelle de la production photovoltaïque à Diass.
-                  La période étudiée, les unités et la capacité de référence
-                  doivent être précisées dans la légende scientifique définitive.
                 </figcaption>
               </figure>
             </div>

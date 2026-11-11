@@ -6,6 +6,8 @@ import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import clsx from 'clsx'
 import { asset } from '@/lib/paths'
+import ThemeToggle from './ThemeToggle'
+import LangToggle from './LangToggle'
 
 const isActive = (pathname: string, href: string) => {
   if (href === '/') return pathname === '/'
@@ -73,10 +75,14 @@ export default function Sidebar() {
     <nav className="flex flex-col h-full">
       {/* Logo */}
       <div className="px-6 py-6 border-b border-db-border">
-        <Link href="/" className="block">
-          <div className="text-sm font-semibold text-db-text tracking-tight">Deep Aero SN</div>
-          <div className="text-[11px] text-db-dim mt-0.5">Mémoire de licence</div>
-        </Link>
+        <div className="flex items-center justify-between gap-2">
+          <Link href="/" className="block">
+            <div className="text-sm font-semibold text-db-text tracking-tight">Deep Aero SN</div>
+            <div className="text-[11px] text-db-dim mt-0.5">Mémoire de licence</div>
+          </Link>
+          <ThemeToggle />
+          <LangToggle />
+        </div>
       </div>
 
       {/* Sommaire */}

@@ -5,7 +5,7 @@ export const chapterContent: ChapterData = {
   title: 'Modèles pour séries temporelles',
   part: 'Partie II — Modélisation et deep learning',
   intro:
-    "Ce chapitre présente les cadres de modélisation qui exploitent la dimension temporelle. Il examine successivement les réseaux convolutifs 1D, qui extraient des motifs locaux par partage de poids ; les réseaux récurrents (RNN, LSTM, GRU), qui entretiennent un état caché pour suivre la dépendance séquentielle ; le mécanisme d'attention, qui pondère directement l'ensemble des états passés ; et le Transformer, qui abandonne la récurrence au profit d'une auto-attention entièrement parallélisable. Ces briques forment le socle des architectures spécialisées TFT et TCN, détaillées au chapitre~6.",
+    "Ce chapitre présente les modèles qui exploitent la dimension temporelle. Il examine quatre familles : les réseaux convolutifs 1D, qui extraient des motifs locaux par partage de poids ; les réseaux récurrents (RNN, LSTM, GRU), qui entretiennent un état caché pour suivre la dépendance séquentielle ; le mécanisme d'attention, qui pondère directement les états passés ; et le Transformer, qui remplace la récurrence par une auto-attention parallélisable. Ces briques constituent le socle des architectures TFT et TCN, détaillées au chapitre~6.",
   sections: [
     {
       type: 'section',
@@ -14,7 +14,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Les réseaux denses traitent chaque entrée isolément, sans exploiter la topologie spatiale ou temporelle. Les réseaux convolutifs (CNN) y remédient en imposant localité et partage de poids, ce qui leur permet d'analyser des séquences longues à nombre de paramètres modéré.",
+            "Un réseau dense traite chaque entrée isolément : il ignore la topologie spatiale et temporelle. Le réseau convolutif (CNN) y remédie en imposant la localité et le partage des poids. Il analyse ainsi des séquences longues avec un nombre de paramètres modéré.",
         },
         {
           type: 'subsection',
@@ -23,7 +23,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Un perceptron multicouche reliant une entrée de dimension $p$ à $N$ neurones mobilise $p \\times N$ paramètres ; sur une entrée de forte dimension, cette croissance quadratique fait rapidement basculer l'entraînement en surapprentissage. Les CNN l'évitent par trois contraintes structurelles. La **localité** limite chaque neurone à un sous-ensemble restreint de l'entrée, son champ réceptif local. Le **partage des poids** applique un même filtre sur toute la séquence, ramenant le coût d'un filtre à la taille $k$ de son noyau. L'**invariance par translation** garantit qu'une caractéristique apprise en un point reste détectable en toute autre position.",
+                "Un perceptron multicouche relie une entrée de dimension $p$ à $N$ neurones : il coûte $p \\times N$ paramètres. Sur une entrée de forte dimension, ce nombre explose et l'entraînement bascule vite en surapprentissage. Les CNN évitent ce travers par trois contraintes structurelles. La **localité** limite chaque neurone à un sous-ensemble restreint de l'entrée : son champ réceptif local. Le **partage des poids** applique le même filtre à toute la séquence ; le coût d'un filtre se réduit alors à la taille $k$ de son noyau. L'**invariance par translation** garantit qu'une caractéristique apprise en un point reste détectable en toute autre position.",
             },
             {
               type: 'text',
@@ -39,7 +39,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "En prévision temporelle, un filtre 1D de taille $k$ glisse le long du temps en calculant le produit scalaire entre ses poids $w$ et la fenêtre d'entrée. Pour un signal $x$, la convolution 1D discrète s'écrit :",
+                "Dans la prévision temporelle, un filtre 1D de taille $k$ glisse le long du signal : à chaque pas, il calcule le produit scalaire entre ses poids $w$ et la fenêtre d'entrée. Pour un signal $x$, la convolution 1D discrète s'écrit :",
             },
             {
               type: 'math',
@@ -49,7 +49,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Interdire toute fuite d'information du futur vers le passé impose une contrainte de **causalité**, qui restreint le calcul aux pas de temps antérieurs ou égaux à $t$ :",
+                "Pour empêcher toute fuite d'information du futur vers le passé, on impose une contrainte de **causalité** : le calcul ne voit que les pas de temps antérieurs ou égaux à $t$ :",
             },
             {
               type: 'math',
@@ -59,7 +59,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le mode de remplissage (*padding*) fixe la dimension de la carte de sortie. En mode **valid**, aucun remplissage n'est ajouté et la sortie compte $T - k + 1$ pas. En mode **same**, un remplissage symétrique conserve la longueur initiale $T$. En mode **causal**, le remplissage est rejeté exclusivement à gauche : la longueur $T$ est préservée sans qu'aucune information future ne remonte.",
+                "Le remplissage (*padding*) fixe la dimension de la carte de sortie. En mode **valid**, on n'ajoute rien : la sortie compte $T - k + 1$ pas. En mode **same**, un remplissage symétrique conserve la longueur $T$. En mode **causal**, le remplissage se fait uniquement à gauche : on garde la longueur $T$ et rien ne remonte depuis le futur.",
             },
             {
               type: 'figure',
@@ -77,7 +77,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Pour les représentations bidimensionnelles (spectrogrammes issus du signal temporel, par exemple), l'opération s'étend sur deux axes. Une entrée $X$ de dimensions $H \\times W$ et $C$ canaux convoluée par un filtre $W \\in \\mathbb{R}^{C_f \\times k_h \\times k_w}$ produit :",
+                "Pour une représentation bidimensionnelle (spectrogramme issu du signal temporel, par exemple), l'opération s'étend sur deux axes. Une entrée $X$ de dimensions $H \\times W$ et $C$ canaux, convoluée par un filtre $W \\in \\mathbb{R}^{C_f \\times k_h \\times k_w}$, produit :",
             },
             {
               type: 'math',
@@ -92,7 +92,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Dans une architecture moderne, l'extraction de motifs associe la convolution à des transformations stabilisatrices :",
+                "Dans une architecture moderne, on associe la convolution à des transformations stabilisatrices :",
             },
             {
               type: 'math',
@@ -102,7 +102,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "où $\\text{BN}$ désigne la normalisation par lot (*Batch Normalization*) et $F$ le nombre de filtres. La représentation intermédiaire est ensuite projetée vers l'espace cible :",
+                "où $\\text{BN}$ désigne la normalisation par lot (*Batch Normalization*) et $F$ le nombre de filtres. On projette ensuite cette représentation vers l'espace cible :",
             },
             {
               type: 'math',
@@ -151,7 +151,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le champ réceptif mesure la largeur de la séquence d'entrée qui influence un neurone donné. Pour un réseau de $L$ couches convolutives standards de noyau $k$, il croît linéairement :",
+                "Le champ réceptif, c'est la largeur de la séquence d'entrée qui influe sur un neurone donné. Pour un réseau de $L$ couches convolutives standards de noyau $k$, il croît linéairement :",
             },
             {
               type: 'math',
@@ -161,7 +161,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Capturer des dépendances à long terme sans alourdir le réseau ni multiplier les paramètres : telle est la raison d'être des **convolutions dilatées**, qui introduisent un facteur d'espacement $d$ :",
+                "Les **convolutions dilatées** visent un objectif : capturer des dépendances à long terme sans alourdir le réseau ni multiplier les paramètres. Elles introduisent pour cela un facteur d'espacement $d$ :",
             },
             {
               type: 'math',
@@ -171,7 +171,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "En faisant croître la dilatation exponentiellement avec la profondeur ($d = 2^\\ell$ à la couche $\\ell$), le champ réceptif s'étend lui aussi exponentiellement. Cette propriété est le cœur de l'architecture WaveNet (van den Oord, 2016), qui y adjoint une activation filtrée (*gating*) :",
+                "Si la dilatation croît exponentiellement avec la profondeur ($d = 2^\\ell$ à la couche $\\ell$), le champ réceptif grandit de la même façon. WaveNet (van den Oord, 2016) repose sur cette propriété et y ajoute une activation filtrée (*gating*) :",
             },
             {
               type: 'math',
@@ -201,7 +201,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Les réseaux récurrents modélisent directement la dépendance séquentielle en conservant un état caché mis à jour à chaque pas de temps.",
+            "Un réseau récurrent modélise la dépendance séquentielle : il conserve un état caché, mis à jour à chaque pas de temps.",
         },
         {
           type: 'subsection',
@@ -231,7 +231,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La régularisation des réseaux récurrents demande une adaptation, le dropout standard perturbant la mémoire temporelle. Le *dropout récurrent* applique un même masque de Bernoulli $\\mathbf{m}$ à tous les pas de temps de la séquence :",
+                "Régulariser un réseau récurrent demande une adaptation : le dropout standard perturbe la mémoire temporelle. Le *dropout récurrent* applique donc un même masque de Bernoulli $\\mathbf{m}$ à tous les pas de temps de la séquence :",
             },
             {
               type: 'math',
@@ -241,7 +241,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "L'entraînement procède par rétropropagation à travers le temps (*Backpropagation Through Time*, BPTT), dont la récurrence enchaîne les produits matriciels $\\prod_{k} W_{hh}$. Le mécanisme de disparition du gradient analysé au chapitre~4 s'y manifeste pleinement : les dépendances lointaines cessent d'être apprises.",
+                "L'entraînement se fait par rétropropagation à travers le temps (*Backpropagation Through Time*, BPTT) : la récurrence y enchaîne les produits matriciels $\\prod_{k} W_{hh}$. La disparition du gradient, analysée au chapitre~4, s'y manifeste alors pleinement : les dépendances lointaines cessent d'être apprises.",
             },
           ],
         },
@@ -252,7 +252,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le réseau LSTM (Hochreiter, 1997) résout la disparition du gradient par un vecteur d'état de cellule $\\mathbf{c}_t$ régulé par trois portes d'activation sigmoïdiennes :",
+                "Le LSTM (Hochreiter, 1997) corrige la disparition du gradient avec un état de cellule $\\mathbf{c}_t$, régulé par trois portes d'activation sigmoïdiennes :",
             },
             {
               type: 'math',
@@ -307,7 +307,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Là où la séquence entière est disponible simultanément, comme dans les tâches non causales, les réseaux récurrents bidirectionnels la parcourent dans les deux sens chronologiques :",
+                "Quand toute la séquence est déjà disponible, comme dans les tâches non causales, le réseau récurrent bidirectionnel la parcourt dans les deux sens chronologiques :",
             },
             {
               type: 'math',
@@ -348,7 +348,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "L'attention remédie au goulot d'étranglement du vecteur d'état de dimension fixe : au lieu de comprimer tout le passé dans un seul vecteur, elle pondère directement la contribution de chaque état historique.",
+            "L'attention remédie au goulot d'étranglement du vecteur d'état de dimension fixe : au lieu de comprimer tout le passé dans un seul vecteur, elle pondère chaque état historique.",
         },
         {
           type: 'subsection',
@@ -443,7 +443,7 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Le Transformer (Vaswani, 2017) écarte la récurrence au profit de l'auto-attention, ce qui autorise une parallélisation complète du traitement des séquences.",
+            "Le Transformer (Vaswani, 2017) remplace la récurrence par l'auto-attention : le traitement des séquences devient alors entièrement parallèle.",
         },
         {
           type: 'figure',
@@ -505,7 +505,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "En prévision temporelle, la représentation latente finale $\\mathbf{Z}^{(L)}$ issue de l'encodeur est projetée linéairement pour construire la prédiction sur l'horizon $H$ :",
+                "En prévision temporelle, on projette linéairement la représentation finale $\\mathbf{Z}^{(L)}$ de l'encodeur pour construire la prédiction sur l'horizon $H$ :",
             },
             {
               type: 'math',
@@ -520,6 +520,17 @@ export const chapterContent: ChapterData = {
               heightClass: 'h-96 md:h-[28rem]',
             },
           ],
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Conclusion',
+      blocks: [
+        {
+          type: 'text',
+          content:
+            "Les architectures du chapitre suivant reposent sur trois familles de briques.\n\nLa convolution exploite la localité et le partage de poids : elle réduit le nombre de paramètres face à un réseau dense. En version causale et dilatée, elle ouvre le champ réceptif sans jamais regarder le futur, comme dans WaveNet.\n\nLa récurrence entretient un état caché à travers la séquence, mais le RNN seul perd l'information sur les longues séquences. Le LSTM y répond par un état de cellule et trois portes ; le GRU en utilise deux, pour un coût plus faible. L'attention, elle, pondère les états passés au lieu de tout comprimer dans un vecteur unique ; en multi-têtes, elle couvre plusieurs sous-espaces, mais son coût croît quadratiquement avec la longueur.\n\nLe Transformer assemble ces éléments — auto-attention, encodage positionnel, connexions résiduelles, normalisation par couche — et supprime la récurrence : tout devient parallèle. Le TFT et le TCN combinent ensuite ces briques selon deux logiques différentes.",
         },
       ],
     },

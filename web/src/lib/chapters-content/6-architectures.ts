@@ -5,7 +5,7 @@ export const chapterContent: ChapterData = {
   title: 'Architectures avancées appliquées',
   part: 'Partie II — Modélisation et deep learning',
   intro:
-    "La prévision photovoltaïque consiste à estimer la production solaire à partir de séquences historiques. Sa difficulté tient à deux échelles de variabilité imbriquées : le cycle diurne et saisonnier, largement déterministe, et la couverture nuageuse, brutale et stochastique. Les méthodes de lissage, aveugles à la seconde, s'y révèlent insuffisantes. Ce chapitre présente les deux architectures de référence retenues dans ce travail, le Temporal Fusion Transformer et le Temporal Convolutional Network, ainsi que le cadre commun d'encodage et d'évaluation qui les met en regard.",
+    "La prévision photovoltaïque estime la production solaire à partir de séquences historiques. Elle se heurte à deux variabilités imbriquées : le cycle diurne et saisonnier, largement déterministe, et la couverture nuageuse, brutale et stochastique. Aveugle à cette seconde composante, un lissage classique échoue. Ce chapitre présente les deux architectures retenues, le Temporal Fusion Transformer et le Temporal Convolutional Network, puis le cadre commun d'encodage et d'évaluation qui les met en regard.",
   sections: [
     {
       type: 'section',
@@ -18,7 +18,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le Temporal Fusion Transformer (TFT) est une architecture à attention conçue pour la prévision multi-horizon de séries multivariées~(Lim, 2021). Son entrée combine nativement trois types de données : des **covariables statiques** (localisation du panneau, puissance installée), des **entrées futures connues** (heure, jour de la semaine, saison) et des **séries exogènes passées** (irradiance, température, vent). Son fonctionnement articule trois dispositifs : le Variable Selection Network retient, à chaque instant, les variables qui importent ; l'attention exploite les relations temporelles pertinentes ; la sortie en quantiles rend l'incertitude explicite.",
+                "Le Temporal Fusion Transformer (TFT) est une architecture à attention conçue pour la prévision multi-horizon de séries multivariées~(Lim, 2021). Son entrée combine trois types de données : des **covariables statiques** (localisation du panneau, puissance installée), des **entrées futures connues** (heure, jour de la semaine, saison) et des **séries exogènes passées** (irradiance, température, vent). Trois mécanismes portent ensuite son fonctionnement : le Variable Selection Network retient, à chaque instant, les variables qui importent ; l'attention exploite les relations temporelles pertinentes ; la sortie en quantiles rend l'incertitude explicite.",
             },
             {
               type: 'figure',
@@ -30,7 +30,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Sa valeur ajoutée tient à l'interprétabilité : on peut visualiser les variables retenues par la VSN, les positions temporelles mises en avant par l'attention et les features statiques qui pèsent sur la sortie~(Lim, 2021), un atout décisif pour les opérateurs de réseau électrique.",
+                "Sa valeur ajoutée tient à l'interprétabilité : on visualise les variables retenues par la VSN, les positions temporelles mises en avant par l'attention et les features statiques qui pèsent sur la sortie~(Lim, 2021). Pour un opérateur de réseau électrique, c'est un atout décisif.",
             },
           ],
         },
@@ -41,7 +41,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Les covariables statiques (localisation du panneau, puissance installée, type de capteur) traversent un encodeur statique qui produit quatre vecteurs de contexte, chacun dédié à un sous-système : la sélection de variables, l'initialisation des états LSTM et le conditionnement de la sortie.",
+                "Les covariables statiques (localisation du panneau, puissance installée, type de capteur) traversent un encodeur statique. Il produit quatre vecteurs de contexte, chacun dédié à un sous-système : sélection de variables, initialisation des états LSTM, conditionnement de la sortie.",
             },
             {
               type: 'text',
@@ -60,7 +60,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Cette séparation laisse le modèle exploiter une même information statique de plusieurs manières selon le sous-système : la sélection de variables réclame un résumé global ($\\mathbf{c}_s$), là où les LSTM attendent un état initial ($\\mathbf{c}_e$, $\\mathbf{c}_h$). Chaque GRN apprend une transformation qui lui est propre, ce qui évite un partage excessif de paramètres.",
+                "Cette séparation permet d'employer la même information statique de plusieurs façons. La sélection de variables veut un résumé global ($\\mathbf{c}_s$) ; les LSTM attendent un état initial ($\\mathbf{c}_e$, $\\mathbf{c}_h$). Chaque GRN apprend sa propre transformation, ce qui évite un partage excessif de paramètres.",
             },
           ],
         },
@@ -71,12 +71,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Traitons d'abord le constituant fondamental du TFT. Sélection de variables, traitement statique et décodage reposent tous sur le même type de réseau résiduel : le Gated Residual Network.",
+                "Trois sous-systèmes du TFT se partagent le même bloc : la sélection de variables, le traitement statique et le décodage. Ce bloc fondateur est le Gated Residual Network (GRN).",
             },
             {
               type: 'text',
               content:
-                "Le GRN est un réseau résiduel doté d'une porte GLU (Gated Linear Unit) qui module le flux d'information : le sigmoïde écarte les features non pertinentes, tandis que la connexion résiduelle préserve le gradient et l'information d'origine.",
+                "Le GRN est un réseau résiduel doté d'une porte GLU (Gated Linear Unit), qui module le flux d'information. Le sigmoïde écarte les features non pertinentes ; la connexion résiduelle, elle, préserve le gradient et l'information d'origine.",
             },
             {
               type: 'text',
@@ -95,7 +95,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "où $\\mathbf{a}$ est l'entrée principale (features temporelles ou statiques) et $\\mathbf{c}$ une condition optionnelle (contexte statique ou temporel). La transformation non linéaire $\\eta_2$ recourt à une ELU et sert à l'extraction de caractéristiques ; $\\eta_1$ est la projection linéaire qui suit. La porte GLU segmente les $2d$ canaux en deux moitiés : la première fait office de porte, la seconde de candidat, selon $\\text{GLU}(\\eta_1) = \\sigma(\\eta_1^{(1:d)}) \\odot \\eta_1^{(d+1:2d)}$.",
+                "où $\\mathbf{a}$ est l'entrée principale (features temporelles ou statiques) et $\\mathbf{c}$ une condition optionnelle (contexte statique ou temporel). L'ELU de $\\eta_2$ extrait les caractéristiques ; $\\eta_1$ est la projection linéaire qui suit. La porte GLU découpe les $2d$ canaux en deux moitiés : la première sert de porte, la seconde de candidat, selon $\\text{GLU}(\\eta_1) = \\sigma(\\eta_1^{(1:d)}) \\odot \\eta_1^{(d+1:2d)}$.",
             },
             {
               type: 'figure',
@@ -107,7 +107,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le GRN se retrouve partout dans le TFT : sélection de variables, traitement des features statiques, décodage. Sa force tient à la porte GLU, dont le sigmoïde «~ferme~» approximativement les dimensions inutiles. La connexion résiduelle $\\mathbf{a} + \\dots$ et la Layer Normalization~(Ba, 2016) garantissent que l'information d'entrée n'est jamais entièrement perdue.",
+                "Deux garde-fous complètent la porte GLU. La connexion résiduelle $\\mathbf{a} + \\dots$ et la Layer Normalization~(Ba, 2016) font que l'information d'entrée n'est jamais entièrement perdue.",
             },
           ],
         },
@@ -118,7 +118,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La VSN répond à une question mouvante : quelles variables d'entrée importent à cet instant précis ? L'irradiance est déterminante à midi mais sans objet la nuit, la température reste pertinente en permanence. La VSN calcule donc un poids d'importance $\\boldsymbol{\\xi}_t$ par variable, ce qui concentre le modèle sur les plus informatives.",
+                "La VSN répond à une question mouvante : quelles variables d'entrée importent à cet instant précis ? L'irradiance est déterminante à midi mais sans objet la nuit ; la température, elle, reste pertinente en permanence. La VSN calcule donc un poids d'importance $\\boldsymbol{\\xi}_t$ par variable, qui concentre le modèle sur les plus informatives.",
             },
             {
               type: 'text',
@@ -132,7 +132,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le vecteur $\\boldsymbol{\\xi}_t \\in \\mathbb{R}^{N_v}$, de somme unité, pondère les $N_v$ colonnes de la matrice $\\mathbf{X}_t \\in \\mathbb{R}^{N_v \\times d}$ à l'instant $t$ ; le contexte $\\mathbf{c}_s$ encode le site. Les variables considérées vont de l'irradiance et la température au vent et à l'heure.",
+                "Le vecteur $\\boldsymbol{\\xi}_t \\in \\mathbb{R}^{N_v}$, de somme unité, pondère les $N_v$ colonnes de $\\mathbf{X}_t \\in \\mathbb{R}^{N_v \\times d}$ à l'instant $t$. Le contexte $\\mathbf{c}_s$ encode le site ; les variables vont de l'irradiance et la température au vent et à l'heure.",
             },
             {
               type: 'text',
@@ -158,7 +158,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "La VSN est interprétable : en suivant les poids $\\boldsymbol{\\xi}_t$ au fil du temps, on lit quelles variables dominent la prédiction ; on s'attend à un poids élevé de l'irradiance le jour et nul la nuit, la température demeurant toujours significative. C'est un avantage net sur les modèles «~boîte noire~».",
+                "La VSN est donc interprétable : en suivant les poids $\\boldsymbol{\\xi}_t$ au fil du temps, on lit quelles variables dominent la prédiction. C'est un avantage net sur les modèles «~boîte noire~».",
             },
           ],
         },
@@ -169,12 +169,12 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Les variables filtrées forment une séquence temporelle $\\tilde{\\mathbf{x}}_1, \\ldots, \\tilde{\\mathbf{x}}_T$. Il reste à encoder ces dépendances séquentielles, puis à les mobiliser au moment de prédire. Le décodeur du TFT combine pour cela un LSTM local, pour les motifs courts, et une attention interprétable, pour les dépendances à longue portée.",
+                "Les variables filtrées forment une séquence temporelle $\\tilde{\\mathbf{x}}_1, \\ldots, \\tilde{\\mathbf{x}}_T$. Il faut encoder ses dépendances séquentielles, puis les mobiliser pour prédire. Le décodeur du TFT y parvient avec deux outils : un LSTM local pour les motifs courts, une attention interprétable pour les dépendances à longue portée.",
             },
             {
               type: 'text',
               content:
-                "L'attention «~interprétable~» partage la projection de valeur entre les têtes, ce qui autorise la moyenne des cartes d'attention et fournit une attention globale unique.",
+                "L'adjectif «~interprétable~» vient d'un choix précis : contrairement à l'attention standard, les têtes y partagent la projection de valeur.",
             },
             {
               type: 'text',
@@ -193,7 +193,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le partage de $W_V$ distingue cette attention de l'attention standard : la moyenne des cartes d'attention garde un sens, et l'on peut agréger les poids de toutes les têtes en une carte interprétable. Appliquée entre passé (encodeur) et futur (décodeur), elle révèle quelles positions passées pèsent le plus sur la prédiction.",
+                "Ce partage change tout : la moyenne des cartes d'attention garde un sens, et l'on agrège les poids de toutes les têtes en une seule carte. Entre passé (encodeur) et futur (décodeur), cette carte révèle quelles positions passées pèsent le plus sur la prédiction.",
             },
           ],
         },
@@ -204,7 +204,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le TFT ne prédit pas une valeur unique, mais plusieurs quantiles simultanément, à savoir $q=0{,}1$ (pire cas), $q=0{,}5$ (médiane) et $q=0{,}9$ (meilleur cas), ce qui livre une mesure complète de l'incertitude.",
+                "Le TFT ne prédit pas une valeur unique, mais plusieurs quantiles à la fois : $q=0{,}1$ (pire cas), $q=0{,}5$ (médiane) et $q=0{,}9$ (meilleur cas). Le modèle livre ainsi une mesure complète de l'incertitude.",
             },
             {
               type: 'text',
@@ -218,7 +218,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Pour $q=0{,}5$, la pénalité est symétrique : surestimation et sous-estimation coûtent autant. Pour $q=0{,}1$, sous-estimer coûte neuf fois plus que surestimer, ce qui pousse le modèle vers le bas de la distribution, comme l'exige la gestion de réseau, où l'on planifie sur le pire cas plutôt que de risquer un blackout.",
+                "Pour $q=0{,}5$, la pénalité est symétrique : surestimation et sous-estimation coûtent autant. Pour $q=0{,}1$, sous-estimer coûte en revanche neuf fois plus que surestimer : le modèle bascule vers le bas de la distribution. C'est ce qu'exige la gestion de réseau, qui planifie sur le pire cas plutôt que de risquer un blackout.",
             },
             {
               type: 'figure',
@@ -242,7 +242,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le Temporal Convolutional Network (TCN) s'appuie sur des convolutions causales dilatées pour modéliser les dépendances longues à moindre coût que les RNN, tout en se parallélisant intégralement (Bai, 2018). Pour la prévision PV, son champ réceptif exponentiel capte bien les motifs cycliques journaliers et hebdomadaires.",
+                "Le Temporal Convolutional Network (TCN) s'appuie sur des convolutions causales dilatées pour modéliser les dépendances longues à moindre coût que les RNN, tout en se parallélisant intégralement (Bai, 2018).",
             },
             {
               type: 'text',
@@ -293,7 +293,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Avec $k = 3$ et $L = 10$ couches, $R = 1 + 2(2^{10} - 1) = 2047$ pas de temps, soit plus de trois semaines en données horaires. Le TCN traitant la séquence en parallèle, et non pas à pas comme un LSTM, son entraînement s'en trouve accéléré.",
+                "Avec $k = 3$ et $L = 10$ couches, $R = 1 + 2(2^{10} - 1) = 2047$ pas de temps, soit plus de trois semaines en données horaires.",
             },
           ],
         },
@@ -304,7 +304,7 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le TCN empile des blocs résiduels, chacun renfermant deux convolutions dilatées causales, une activation, une normalisation et une connexion résiduelle. La connexion skip projette l'entrée dans l'espace de sortie lorsque les dimensions diffèrent.",
+                "Le TCN empile des blocs résiduels. Chacun renferme deux convolutions dilatées causales, une activation, une normalisation et une connexion résiduelle ; la connexion skip projette l'entrée dans l'espace de sortie lorsque les dimensions diffèrent.",
             },
             {
               type: 'text',
@@ -336,17 +336,17 @@ export const chapterContent: ChapterData = {
             {
               type: 'text',
               content:
-                "Le TCN convient particulièrement à la prévision PV : son champ réceptif exponentiel couvre les cycles diurne et hebdomadaire, la parallélisation totale accélère l'entraînement sur de longues séquences, et sa complexité mémoire linéaire $\\mathcal{O}(T)$ surclasse la quadraticité $\\mathcal{O}(T^2)$ du Transformer.",
+                "Le TCN convient particulièrement à la prévision PV : son champ réceptif exponentiel y couvre les cycles diurne et hebdomadaire.",
             },
             {
               type: 'text',
               content:
-                "Il s'entraîne plus vite qu'un LSTM (parallélisme total) et reste plus stable qu'un Transformer (pas de quadraticité). En contrepartie, il ne gère pas nativement les variables statiques (localisation du panneau) et n'offre pas l'interprétabilité d'une attention. C'est un bon choix lorsque la vitesse d'entraînement prime.",
+                "Face au Transformer, le TCN évite la quadraticité $\\mathcal{O}(T^2)$ de l'attention : sa complexité mémoire reste linéaire $\\mathcal{O}(T)$, ce qui le rend plus stable. Face au LSTM, sa parallélisation totale le fait s'entraîner plus vite. En contrepartie, il ne gère pas nativement les variables statiques (localisation du panneau) et n'offre pas l'interprétabilité d'une attention. C'est le bon choix lorsque la vitesse d'entraînement prime.",
             },
             {
               type: 'text',
               content:
-                "Les deux architectures de référence étant posées, nous détaillons les stratégies d'encodage et d'évaluation communes à ce travail.",
+                "Les deux architectures sont posées. Reste le cadre commun : encodage des entrées et évaluation, partagés par le TFT et le TCN.",
             },
           ],
         },
@@ -435,7 +435,18 @@ export const chapterContent: ChapterData = {
         {
           type: 'text',
           content:
-            "Deux architectures de référence et complémentaires ont été présentées pour la prévision de la production solaire. Le Temporal Fusion Transformer mise sur la sélection de variables et l'attention interprétable ; le Temporal Convolutional Network privilégie la légèreté et la vitesse d'entraînement par ses convolutions causales dilatées. L'encodage circulaire de l'heure et la baseline de persistance fixent en outre le cadre commun dans lequel ces deux modèles seront comparés dans la suite du mémoire.",
+            "L'encodage sin/cos, la persistance et le skill score forment le cadre commun d'entrée et d'évaluation. Le TFT et le TCN seront confrontés sur ce terrain dans la suite du mémoire.",
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Conclusion',
+      blocks: [
+        {
+          type: 'text',
+          content:
+            "Le TFT et le TCN répondent à deux besoins différents. Le TFT vise la lisibilité : la VSN et ses GRN à porte GLU sélectionnent les variables, l'attention multi-têtes interprétable montre les positions passées qui comptent, et la sortie en quantiles expose l'incertitude. Le TCN vise la rapidité : ses convolutions causales dilatées portent le champ réceptif à 2 047 pas pour dix couches et un noyau de taille trois, avec une complexité mémoire linéaire et une parallélisation complète. En contrepartie, il laisse de côté les variables statiques et l'interprétabilité de l'attention.\n\nLe cadre commun permet de les départager sur le même terrain : l'encodage cyclique de l'heure restitue la continuité entre 23 h et 0 h, la persistance fournit la référence à battre et le skill score quantifie le gain apporté par le modèle. C'est ce que fait le chapitre suivant, sur la centrale de Diass.",
         },
       ],
     },
