@@ -11,12 +11,14 @@ export default function ThemeToggle() {
     const isLight = stored === 'light'
     setLight(isLight)
     document.documentElement.classList.toggle('light', isLight)
+    document.documentElement.classList.toggle('dark', !isLight)
   }, [])
 
   const toggle = () => {
     const next = !light
     setLight(next)
     document.documentElement.classList.toggle('light', next)
+    document.documentElement.classList.toggle('dark', !next)
     localStorage.setItem('theme', next ? 'light' : 'dark')
   }
 

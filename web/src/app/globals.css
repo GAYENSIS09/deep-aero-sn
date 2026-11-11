@@ -44,8 +44,8 @@ body {
 }
 
 ::selection {
-  background: #AAFF00;
-  color: #0A0A0A;
+  background: rgb(var(--db-accent));
+  color: rgb(var(--db-bg));
 }
 
 .glow {
@@ -57,29 +57,29 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #AAFF00 0%, #88CC00 100%);
+  background: linear-gradient(135deg, rgb(var(--db-accent)) 0%, rgb(var(--db-accent2)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-solar {
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  background: linear-gradient(135deg, rgb(var(--db-solar)) 0%, #34d399 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-wind {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, rgb(var(--db-wind)) 0%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 pre {
-  background: #121212 !important;
-  border: 1px solid #262626;
+  background: rgb(var(--db-surface)) !important;
+  border: 1px solid rgb(var(--db-border));
   border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;
@@ -92,21 +92,21 @@ code {
 }
 
 :not(pre) > code {
-  background: #171717;
-  color: #AAFF00;
+  background: rgb(var(--db-panel));
+  color: rgb(var(--db-accent));
   padding: 0.125rem 0.375rem;
   border-radius: 4px;
   font-size: 0.8em;
 }
 
 a {
-  color: #AAFF00;
+  color: rgb(var(--db-accent));
   text-decoration: none;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: #88CC00;
+  color: rgb(var(--db-accent2));
 }
 
 ::-webkit-scrollbar {
@@ -115,16 +115,16 @@ a:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: rgb(var(--db-bg));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: rgb(var(--db-border));
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7A7A72;
+  background: rgb(var(--db-muted));
 }
 
 @keyframes gradient-shift {
@@ -205,7 +205,7 @@ html {
   font-family: 'Source Serif 4', Georgia, Cambria, 'Times New Roman', serif;
   font-size: 1.06rem;
   line-height: 1.85;
-  color: #E6E6E0;
+  color: rgb(var(--db-text));
 }
 
 .prose-db > * + * {
@@ -229,7 +229,7 @@ html {
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #F2F2F2;
+  color: rgb(var(--db-text));
   margin-top: 3.25rem;
   padding-bottom: 0.55rem;
   border-bottom: 1px solid rgba(170, 255, 0, 0.14);
@@ -239,7 +239,7 @@ html {
   font-family: 'Source Serif 4', Georgia, serif;
   font-size: 1.16rem;
   font-weight: 600;
-  color: #EAEAE2;
+  color: rgb(var(--db-text));
   margin-top: 2.4rem;
   margin-bottom: 0.4rem;
 }
@@ -270,8 +270,8 @@ html {
 .callout-transition { border-left-color: #8b5cf6; }
 
 /* KaTeX overrides */
-.katex { color: #F2F2F2; }
-.katex .mord { color: #F2F2F2; }
+.katex { color: rgb(var(--db-text)); }
+.katex .mord { color: rgb(var(--db-text)); }
 
 /* Math formula blocks — use KaTeX fonts for proper Unicode math rendering */
 .bg-db-surface.font-mono {
@@ -292,13 +292,13 @@ html {
 
 .bg-db-surface.font-mono em {
   font-style: italic;
-  color: #e2e2da;
+  color: rgb(var(--db-text));
 }
 
 /* Prose math inline */
 .prose-db code {
   font-family: 'KaTeX_Main', 'KaTeX_Math', 'JetBrains Mono', monospace;
-  color: #c8c8c0;
+  color: rgb(var(--db-muted));
   background: transparent;
   padding: 0;
   border-radius: 0;

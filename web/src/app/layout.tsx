@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Providers from '@/components/Providers'
 import 'katex/dist/katex.min.css'
 
 export const metadata: Metadata = {
@@ -24,7 +23,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased bg-db-bg text-db-text">
-        <Providers>{children}</Providers>
+    {children}
       </body>
     </html>
   )

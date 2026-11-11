@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import VideoBlock from '@/components/VideoBlock'
 import ThemeToggle from '@/components/ThemeToggle'
-import LangToggle from '@/components/LangToggle'
 import { asset } from '@/lib/paths'
 
 function SectionHeading({
@@ -131,7 +130,6 @@ export default function Home() {
             </nav>
 
             <ThemeToggle />
-            <LangToggle />
             <img
               src={asset('/images/senelecLogo.png')}
               alt="SENELEC"

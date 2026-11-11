@@ -7,7 +7,6 @@ import { Menu, X } from 'lucide-react'
 import clsx from 'clsx'
 import { asset } from '@/lib/paths'
 import ThemeToggle from './ThemeToggle'
-import LangToggle from './LangToggle'
 
 const isActive = (pathname: string, href: string) => {
   if (href === '/') return pathname === '/'
@@ -81,7 +80,6 @@ export default function Sidebar() {
             <div className="text-[11px] text-db-dim mt-0.5">Mémoire de licence</div>
           </Link>
           <ThemeToggle />
-          <LangToggle />
         </div>
       </div>
 
