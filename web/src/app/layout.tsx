@@ -4,7 +4,7 @@ import Providers from '@/components/Providers'
 import 'katex/dist/katex.min.css'
 
 export const metadata: Metadata = {
-  title: 'Deep Aero SN — Prévision probabiliste photovoltaïque à 72 h par apprentissage profond',
+  title: 'Prévision probabiliste de la production photovoltaïque par apprentissage profond : application à la centrale de Diass',
   description: 'Mémoire de licence : application à la centrale de Diass (SENELEC). TCN et TFT probabilistes, calibration CQR — RMSE 1,707 MW, R² 0,877, couverture 79,8 %.',
 }
 

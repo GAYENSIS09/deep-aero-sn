@@ -8,7 +8,7 @@
   Université Cheikh Anta Diop de Dakar · SENELEC
 </p>
 
-# Prévision probabiliste de la production photovoltaïque à 72 h par apprentissage profond (TCN, TFT) : application à la centrale de Diass, Sénégal
+# Prévision probabiliste de la production photovoltaïque par apprentissage profond : application à la centrale de Diass
 
 <p align="center">
   Mémoire de Licence 3 Informatique (UCAD) · Stage SENELEC · Dakar, octobre 2026
@@ -29,15 +29,15 @@ Le mémoire propose une réponse méthodologique et opérationnelle : un cadre d
 
 ## La question de départ
 
-> Comment concevoir un modèle d'apprentissage profond capable de prédire, avec précision et robustesse, la production électrique solaire à court terme à 72 h dans le contexte climatique sénégalais, tout en intégrant et en quantifiant l'incertitude inhérente à cette source renouvelable intermittente ?
+> Comment modéliser par apprentissage profond et quantifier l'incertitude de la production photovoltaïque à 72 heures pour sécuriser le pilotage du réseau électrique au Sénégal ?
 
 ## Objectifs et contributions
 
 Trois contributions, de l'analyse physique jusqu'à la validation opérationnelle :
 
 1. **Caractériser la variabilité physique** de la production photovoltaïque au Sénégal (cycles astronomiques, facteurs stochastiques liés aux nuages, aérosols de l'harmattan, température, soiling) et la structurer dans un **référentiel unifié des variables** pour la centrale de Diass (chapitre 2, sections 2.3 et 2.4). Sur le plan méthodologique, les **covariables futures issues des modèles de prévision numérique du temps (NWP)** sont intégrées à l'ensemble des pipelines d'entraînement, d'évaluation et de test, avec une sélection des variables par **approche d'union finale**.
-2. **Évaluer comparativement les architectures d'apprentissage profond dédiées aux séries temporelles** : TCN à convolutions causales dilatées et Temporal Fusion Transformer (TFT) à attention interprétable, conçues pour la prévision multi-horizon à 72 h (stratégie MIMO), avec une sortie probabiliste par quantiles (q0,1 à q0,9) dont l'enveloppe est finement recalibrée par le CQR (*Conformal Quantile Regression*). Les fondations, les modèles de séries temporelles, les architectures avancées et la stratégie probabiliste sont traités aux chapitres 3 à 6.
-3. **Valider rigoureusement le pipeline complet sur la centrale de Diass** (chapitre 7) : de l'exploration des données et du feature engineering causal (garantissant l'absence de fuite d'information) jusqu'à l'évaluation face aux modèles de référence et aux valeurs publiées du site.
+2. **Évaluer comparativement les architectures d'apprentissage profond dédiées aux séries temporelles** : TCN à convolutions causales dilatées et Temporal Fusion Transformer (TFT) à attention interprétable, conçues pour la prévision multi-horizon à 72 h (stratégie MIMO), avec une sortie probabiliste par quantiles (q0,1 à q0,9) dont l'enveloppe est finement recalibrée par le CQR (*Conformal Quantile Regression*). Les fondations, les modèles de séries temporelles, les architectures avancées et la stratégie probabiliste sont traités aux chapitres 4 à 7.
+3. **Valider rigoureusement le pipeline complet sur la centrale de Diass** (chapitre 8) : de l'exploration des données et du feature engineering causal (garantissant l'absence de fuite d'information) jusqu'à l'évaluation face aux modèles de référence et aux valeurs publiées du site.
 
 ## Résultats
 
