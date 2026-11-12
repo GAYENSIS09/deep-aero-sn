@@ -28,6 +28,20 @@ export default function PresentationPage() {
   const [elapsed, setElapsed] = useState(0)
   const [hint, setHint] = useState(true)
 
+  // Permet de viser une planche précise via l'URL (?slide=1..N), utile pour
+  // l'export automatisé (captures d'écran, génération de .pptx, etc.).
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const raw = params.get('slide')
+    if (raw) {
+      const n = parseInt(raw, 10)
+      if (!Number.isNaN(n)) {
+        setIndex(Math.min(TOTAL - 1, Math.max(0, n - 1)))
+      }
+    }
+  }, [])
+
   const tocRef = useRef<HTMLDivElement>(null)
   const previousFocus = useRef<HTMLElement | null>(null)
 

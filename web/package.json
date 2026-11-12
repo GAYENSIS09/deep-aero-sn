@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "extract-data": "python ../scripts/extract_thesis_data.py"
+    "extract-data": "python ../scripts/extract_thesis_data.py",
+    "export-pptx": "python scripts/export_pptx.py"
   },
   "dependencies": {
     "@types/katex": "^0.16.8",
