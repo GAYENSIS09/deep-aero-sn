@@ -259,7 +259,7 @@ export default function PresentationPage() {
               </button>
             </div>
             <p className="mt-2 font-serif italic text-sm text-db-muted">
-              quinze planches · quinze minutes
+              vingt planches · quinze minutes
             </p>
             {ACTES.map((a) => {
               const start = SLIDES.filter((s) => s.acte === a.id)
