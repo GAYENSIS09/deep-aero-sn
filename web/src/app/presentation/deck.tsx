@@ -3,19 +3,32 @@
 /**
  * Deck de soutenance — mémoire « Prévision probabiliste de la production
  * photovoltaïque par apprentissage profond : application à la centrale
- * de Diass » (version submission/, main.tex du 11 novembre 2026).
+ * de Diass » (Baye_Mor_Gaye.pdf).
  *
- * L'ordre des planches suit EXACTEMENT celui du mémoire, chapitre par
- * chapitre et section par section (le kicker de chaque planche indique le
- * chapitre et le paragraphe correspondants) :
+ * Le fil conducteur est celui du mémoire, suivi planche par planche :
  *
- *   Introduction générale                     (planches 1–3)
- *   I   Potentiel solaire et technologie PV   (ch. 1–2, planches 4–6)
- *   II  Architectures d'apprentissage profond (ch. 3–6, planches 7–10)
- *   III Modélisation de la prévision PV       (ch. 7, 7.1 → 7.6, planches 11–29)
+ *   1. Le verrou infrastructurel est levé (JETP, parcs solaires, éolien) ;
+ *      la question se déplace vers la prévision de la production.
+ *   2. Problématique (mot pour mot) : comment modéliser par apprentissage
+ *      profond ET quantifier l'incertitude de la production PV à 72 h
+ *      pour sécuriser le pilotage du réseau électrique au Sénégal.
+ *   3. Trois objectifs qui forment une progression : construire le
+ *      référentiel → modéliser et quantifier l'incertitude → évaluer et
+ *      dégager la portée opérationnelle.
+ *   4. Chaque partie apporte sa réponse ; la conclusion boucle le fil.
  *
- * Les chiffres sont ceux du mémoire. Chaque figure apparaît une seule fois,
- * dans l'ordre de sa numérotation.
+ * Plan des planches (ordre exact du mémoire) :
+ *   Ouverture  Introduction générale           (planches 1 à 3)
+ *   Partie I   Potentiel solaire et techno PV  (ch. 1 et 2, planche 4)
+ *   Partie II  Architectures d'apprentissage   (ch. 3 à 6, planches 5 à 7)
+ *   Partie III Modélisation de la prévision    (ch. 7, planches 8 à 18)
+ *
+ * Épure : chaque planche porte son titre-message, sans autre indication
+ * (chapitre, section, « Partie ») ; le chrome du haut reprend le titre de
+ * la planche courante comme filet de lecture. La composition est pensée
+ * planche par planche —
+ * figure pleine page, asymétrie figure/texte, citation centrale, tableau
+ * centré — plutôt qu'un gabarit unique.
  */
 
 import type { ReactNode } from 'react'
@@ -25,29 +38,30 @@ import { asset } from '@/lib/paths'
 
 /* ───────────────────────── briques ───────────────────────── */
 
-const BODY = 'text-[clamp(1rem,1.55vw,1.3rem)] leading-snug text-db-muted'
+/**
+ * Espaces insécables à la française : avant %, ‰, ° et les unités, à
+ * l'intérieur des milliers. Évite les coupures de ligne mal placées
+ * (« 40 » orphelin en fin de ligne, « % » rejeté au début de la suivante).
+ */
+export const fr = (s: string): string =>
+  s
+    .replace(/(\d) (?=\d{3}(?!\d))/g, '$1\u00A0')
+    .replace(/ (?=[%‰°])/g, '\u00A0')
+    .replace(/(\d) (?=(?:MWc|MW|GWh|kWh|Wh|Wc|W)\b)/g, '$1\u00A0')
+    .replace(/(\d) (?=(?:kWh|W)\/m²)/g, '$1\u00A0')
+    .replace(
+      /(\d) (?=(?:h|s|heures|pas|époques|cycles|fenêtres|colonnes|variables|lignes|mois|jours|ans)\b)/g,
+      '$1\u00A0',
+    )
 
-function Kicker({ children, tone = 'text-db-dim' }: { children: ReactNode; tone?: string }) {
-  return <div className={`font-mono text-[12px] uppercase tracking-[0.25em] ${tone}`}>{children}</div>
-}
+const BODY = 'text-[clamp(1rem,1.5vw,1.25rem)] leading-snug text-db-muted'
 
 /** Chiffre clé en grand, avec son libellé. */
 function Stat({ v, l, tone = 'text-db-text' }: { v: string; l: string; tone?: string }) {
   return (
     <div className="border-t-2 border-db-accent/70 pt-3">
-      <div className={`font-mono tabular-nums leading-none text-[clamp(1.6rem,3vw,2.7rem)] ${tone}`}>{v}</div>
-      <div className="mt-2 text-[clamp(0.9rem,1.25vw,1.1rem)] leading-snug text-db-muted">{l}</div>
-    </div>
-  )
-}
-
-function LedgerRow({ v, l, tone = 'text-db-text' }: { v: string; l: string; tone?: string }) {
-  return (
-    <div className="flex items-baseline gap-5 border-t border-db-border/50 py-2.5">
-      <span className={`w-40 shrink-0 font-mono text-[clamp(1rem,1.5vw,1.3rem)] tabular-nums leading-tight sm:w-56 ${tone}`}>
-        {v}
-      </span>
-      <span className="text-[clamp(0.95rem,1.4vw,1.2rem)] leading-snug text-db-muted">{l}</span>
+      <div className={`font-mono tabular-nums leading-none text-[clamp(1.6rem,3vw,2.7rem)] ${tone}`}>{fr(v)}</div>
+      <div className="mt-2 text-[clamp(0.9rem,1.25vw,1.1rem)] leading-snug text-db-muted">{fr(l)}</div>
     </div>
   )
 }
@@ -56,7 +70,7 @@ function LedgerRow({ v, l, tone = 'text-db-text' }: { v: string; l: string; tone
 function Takeaway({ children }: { children: ReactNode }) {
   return (
     <p className="max-w-5xl border-l-2 border-db-accent/70 pl-5 font-serif text-[clamp(1.1rem,1.9vw,1.55rem)] leading-snug text-db-text">
-      {children}
+      {typeof children === 'string' ? fr(children) : children}
     </p>
   )
 }
@@ -95,15 +109,6 @@ function FigureZoom({
           onClick={() => setOpen(false)}
         >
           <img src={src} alt={alt} className="max-h-full max-w-full bg-white object-contain p-3" />
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setOpen(false)
-            }}
-            className="absolute right-6 top-5 font-mono text-[11px] uppercase tracking-widest text-db-muted hover:text-db-accent"
-          >
-            fermer (échap) ×
-          </button>
         </div>
       )}
     </>
@@ -129,12 +134,12 @@ function Fig({
       <div className={`rounded-sm bg-white p-2 shadow-[0_0_0_1px_rgba(255,255,255,0.08)] ${h}`}>
         <FigureZoom
           src={src}
-          alt={`Figure ${num} — ${caption}`}
+          alt={`Figure ${num} : ${caption}`}
           className="h-full w-full cursor-zoom-in object-contain"
         />
       </div>
       <figcaption className="mt-2 font-mono text-[12px] leading-snug text-db-dim">
-        <span className="text-db-accent">Figure {num}</span> — {caption}
+        <span className="text-db-accent">Figure {num}</span> : {fr(caption)}
       </figcaption>
     </figure>
   )
@@ -142,34 +147,32 @@ function Fig({
 
 const fig = (name: string) => asset('/figures/' + encodeURIComponent(name))
 
-/** Coquille de planche : titre-message ancré en haut, contenu centré dans l'espace restant. */
+/**
+ * Coquille de planche : le titre-message seul en tête (aucune autre
+ * indication), contenu respirant dans l'espace restant.
+ */
 function Slide({
-  kicker,
   title,
-  gap = 'gap-5',
+  gap = 'gap-7',
   children,
 }: {
-  kicker: string
   title: ReactNode
   gap?: string
   children: ReactNode
 }) {
   return (
-    <div className={`flex h-full flex-col px-4 pb-8 pt-2 sm:px-8 md:px-14 ${gap}`}>
-      <div>
-        <Kicker>{kicker}</Kicker>
-        <h2 className="mt-2 max-w-6xl font-serif text-[clamp(1.8rem,3.3vw,2.7rem)] leading-[1.12] text-db-text">
-          {title}
-        </h2>
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col justify-center gap-5">{children}</div>
+    <div className={`flex h-full flex-col px-6 pb-10 pt-4 sm:px-10 md:px-20 ${gap}`}>
+      <h2 className="max-w-6xl font-serif text-[clamp(2rem,3.7vw,3rem)] leading-[1.1] text-db-text">
+        {typeof title === 'string' ? fr(title) : title}
+      </h2>
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-6">{children}</div>
     </div>
   )
 }
 
 /* ───────────────────────── actes (parties du mémoire) ───────────────────────── */
 
-export type ActeId = 'I' | 'II' | 'III'
+export type ActeId = 'O' | 'I' | 'II' | 'III'
 
 export interface ActeMeta {
   id: ActeId
@@ -179,9 +182,10 @@ export interface ActeMeta {
 }
 
 export const ACTES: ActeMeta[] = [
-  { id: 'I', label: 'Partie I', titre: 'Potentiel solaire et technologie photovoltaïque', temps: '0:00 – 3:00' },
-  { id: 'II', label: 'Partie II', titre: 'Architectures d’apprentissage profond', temps: '3:00 – 6:00' },
-  { id: 'III', label: 'Partie III', titre: 'Modélisation de la prévision photovoltaïque', temps: '6:00 – 15:00' },
+  { id: 'O', label: 'Ouverture', titre: 'Contexte, problématique et objectifs', temps: '0:00 – 2:30' },
+  { id: 'I', label: 'Partie I', titre: 'Potentiel solaire et technologie photovoltaïque', temps: '2:30 – 4:30' },
+  { id: 'II', label: 'Partie II', titre: 'Architectures d’apprentissage profond', temps: '4:30 – 8:30' },
+  { id: 'III', label: 'Partie III', titre: 'Modélisation de la prévision photovoltaïque', temps: '8:30 – 15:00' },
 ]
 
 export interface SlideDef {
@@ -199,26 +203,26 @@ export const SLIDES: SlideDef[] = [
     id: 's01',
     title: 'Page de titre',
     section: 'Introduction',
-    acte: 'I',
+    acte: 'O',
     notes:
-      "Bonjour à tous. Je vous présente mon mémoire de licence en informatique : prévision probabiliste de la production photovoltaïque par apprentissage profond, application à la centrale de Diass. Il a été encadré par le Dr Ndiouma Bame, et en stage par le Dr Saidou Abdoul Soumare et le Dr Abdoulaye Ba, de la SENELEC. Je vais suivre le plan du mémoire : le contexte, les méthodes, puis l'application à Diass.",
+      "Bonjour à tous. Je vous présente mon mémoire de licence en informatique : prévision probabiliste de la production photovoltaïque par apprentissage profond, application à la centrale de Diass. Il a été encadré par le Dr Ndiouma Bame, et en stage à la SENELEC par le Dr Saidou Abdoul Soumare et le Dr Abdoulaye Ba. Je vais suivre le plan du mémoire : le contexte et la problématique, le cadre physique, les architectures, puis la modélisation sur Diass et ses résultats.",
     render: () => (
       <div className="flex h-full flex-col px-4 sm:px-8 md:px-14">
         <div className="flex items-center gap-5 pt-3">
           <img
             src={asset('/images/ucadLogo.png')}
             alt="UCAD"
-            className="h-16 w-16 rounded-full bg-white/10 object-contain p-1"
+            className="h-14 w-14 rounded-full bg-white/10 object-contain p-1"
           />
           <div className="flex-1 text-center font-mono text-[12px] uppercase leading-relaxed tracking-[0.2em] text-db-dim">
             <div className="text-db-muted">Université Cheikh Anta Diop de Dakar</div>
-            <div>Faculté des Sciences et Techniques · Département Mathématiques et Informatique</div>
-            <div>Section Informatique · Mémoire de Licence · 2025–2026</div>
+            <div>Faculté des Sciences et Techniques, Département Mathématiques et Informatique</div>
+            <div>Section Informatique, Mémoire de Licence, de 2025 - 2026</div>
           </div>
           <img
             src={asset('/images/senelecLogo.png')}
             alt="SENELEC"
-            className="h-16 w-16 rounded-full bg-white/10 object-contain p-1"
+            className="h-14 w-14 rounded-full bg-white/10 object-contain p-1"
           />
         </div>
         <div className="flex max-w-6xl flex-1 flex-col justify-center">
@@ -226,81 +230,93 @@ export const SLIDES: SlideDef[] = [
             Prévision probabiliste de la production photovoltaïque par apprentissage profond
           </h1>
           <div className="mt-5 text-[clamp(1.3rem,2.7vw,2.1rem)] text-db-accent">Application à la centrale de Diass</div>
-          <p className="mt-7 font-mono text-[13px] tracking-wide text-db-dim">
-            TCN · TFT · MIMO 72 h · Quantiles P10 / P50 / P90 · Calibration CQR
+          <p className="mt-6 font-mono text-[13px] tracking-wide text-db-dim">
+            Prévision multi-horizon à 72 heures par TCN et TFT, quantiles P10, P50 et P90 recalibrés par CQR
           </p>
         </div>
-        <div className="space-y-1.5 py-4 pr-4 md:pr-40">
-          <div className="font-mono text-sm text-db-text">Présenté par Baye Mor Gaye</div>
-          <div className="font-mono text-[12px] leading-relaxed text-db-dim">
-            Encadrant : Dr Ndiouma Bame · Maîtres de stage : Dr Saidou Abdoul Soumare, Dr Abdoulaye Ba
+        <div className="flex flex-wrap items-start justify-center gap-x-16 gap-y-4 border-t border-db-border/40 pb-6 pt-4">
+          <div>
+            <div className="font-mono text-[11px] uppercase tracking-widest text-db-dim">Présenté par</div>
+            <div className="mt-1.5 font-mono text-[clamp(1rem,1.6vw,1.25rem)] text-db-text">Baye Mor Gaye</div>
+          </div>
+          <div>
+            <div className="font-mono text-[11px] uppercase tracking-widest text-db-dim">Encadrant</div>
+            <div className="mt-1.5 font-mono text-[clamp(1rem,1.6vw,1.25rem)] text-db-text">Dr Ndiouma Bame</div>
+          </div>
+          <div>
+            <div className="font-mono text-[11px] uppercase tracking-widest text-db-dim">Maîtres de stage</div>
+            <div className="mt-1.5 font-mono text-[clamp(1rem,1.6vw,1.25rem)] text-db-text">
+              Dr Saidou Abdoul Soumare, Dr Abdoulaye Ba
+            </div>
           </div>
         </div>
       </div>
     ),
   },
 
-  /* 02 — introduction : contexte et problématique */
+  /* 02 — contexte : trois chiffres, un constat. Composition : chiffres + message. */
   {
     id: 's02',
-    title: 'Contexte et problématique',
+    title: 'Du verrou infrastructurel au verrou de la prévision',
     section: 'Introduction générale',
-    acte: 'I',
+    acte: 'O',
     notes:
-      "Le Sénégal s'est engagé, dans le cadre du JETP signé en juin 2023, à porter les renouvelables à 40 % de la capacité installée d'ici 2030. Le solaire est passé à 292 mégawatts-crête en 2025. Mais le climat sahélien rend la production intermittente : harmattan de novembre à février, hivernage de juillet à septembre, passages nuageux. Chaque erreur de prévision se traduit par un déséquilibre du réseau et un appel aux réserves thermiques. D'où ma problématique : comment modéliser par apprentissage profond, et quantifier l'incertitude de, la production photovoltaïque à 72 heures pour sécuriser le pilotage du réseau ?",
+      "Le contexte tient en une idée : le verrou de l'infrastructure est levé, celui de la prévision reste. Dans le cadre du JETP signé le 22 juin 2023, le Sénégal vise 40 % de renouvelables dans la capacité installée d'ici 2030. Les parcs solaires et l'éolien de Taïba N'Diaye ont construit cette capacité, le solaire passe de 245 à 292 MW crête. Mais les renouvelables pèsent 27,35 % de la capacité contre 19,48 % seulement de la production brute : c'est l'effet de l'intermittence. Et la SENELEC achète 76 % de l'énergie acheminée : elle ne pilote pas l'essentiel de ce qui transite. Chaque erreur de prévision se traduit par des déséquilibres et un appel aux réserves thermiques.",
     render: () => (
-      <Slide kicker="Introduction générale · contexte et problématique" title="Un solaire en forte croissance, mais intermittent" gap="gap-8">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Stat v="40 %" l="de capacité renouvelable visée d’ici 2030 (accord JETP, juin 2023)" />
-          <Stat v="292,47 MWc" l="de solaire raccordé au réseau en 2025" />
-          <Stat v="2 saisons" l="harmattan (nov.–fév.) et hivernage (juil.–sept.) : une production intermittente" />
+      <Slide
+        title="Les centrales sont construites ; la question se déplace vers la prévision"
+        gap="gap-9"
+      >
+        <div className="grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
+          <Stat v="40 %" l="de capacité renouvelable visée d’ici 2030, dans le cadre du JETP signé le 22 juin 2023" />
+          <Stat v="292,47 MWc" l="de solaire raccordé en 2025, contre 245 MW en 2022" />
+          <Stat v="76,0 %" l="de l’énergie acheminée est achetée : la SENELEC ne pilote pas ce flux" />
         </div>
-        <div className="max-w-6xl border border-db-border/60 bg-db-border/10 px-6 py-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">Problématique</div>
-          <p className="mt-3 font-serif text-[clamp(1.2rem,2.3vw,1.9rem)] leading-snug text-db-text">
-            Comment modéliser par apprentissage profond, et quantifier l’incertitude de, la production
-            photovoltaïque à 72 heures pour sécuriser le pilotage du réseau électrique au Sénégal ?
-          </p>
-        </div>
+        <Takeaway>
+          Le climat sahélien rend la production intermittente : harmattan, hivernage, passages nuageux. Les
+          renouvelables pèsent 27,35 % de la capacité installée mais 19,48 % de la production brute : chaque erreur de
+          prévision se traduit par des déséquilibres du réseau et un appel aux réserves thermiques.
+        </Takeaway>
       </Slide>
     ),
   },
 
-  /* 03 — introduction : objectifs et plan */
+  /* 03 — problématique et objectifs : la question, puis les trois objectifs qui y répondent */
   {
     id: 's03',
-    title: 'Objectifs et plan',
+    title: 'Problématique et objectifs',
     section: 'Introduction générale',
-    acte: 'I',
+    acte: 'O',
     notes:
-      "Je réponds en trois objectifs, qui forment une progression. Un : construire un référentiel de variables unifié, enrichi de prévisions météo futures, avec une sélection conçue pour éviter les fuites d'information. Deux : concevoir et comparer le TCN et le TFT en prévision multi-horizon à 72 heures, avec des quantiles recalibrés par CQR. Trois : évaluer sur les données réelles de Diass et analyser la portée pour la SENELEC. Le plan suit trois parties : le potentiel solaire et la physique, les architectures, puis la modélisation sur Diass.",
+      "La problématique, telle qu'elle est posée dans le mémoire : comment modéliser par apprentissage profond et quantifier l'incertitude de la production photovoltaïque à 72 heures pour sécuriser le pilotage du réseau électrique au Sénégal ? Elle se décompose en trois sous-questions : comment modéliser, comment quantifier l'incertitude, et à quoi cela sert-il pour le pilotage du réseau. Pour y répondre, trois objectifs forment une progression. Un : construire un référentiel unifié de variables pour Diass, relié à la physique et au climat sahélien, enrichi des covariables futures NWP, avec une sélection par union contre les fuites. Deux : concevoir et comparer TCN et TFT, en multi-horizon 72 heures, sorties quantiles recalibrées par CQR. Trois : évaluer sur les données réelles de Diass et dégager la portée pour la SENELEC. Le plan suit les trois parties du mémoire : le cadre physique, les architectures, la modélisation sur Diass.",
     render: () => (
-      <Slide kicker="Introduction générale · objectifs et plan du mémoire" title="Trois objectifs, trois parties" gap="gap-7">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <Slide title="Une question, trois objectifs" gap="gap-7">
+        <p className="mx-auto max-w-5xl border-l-2 border-db-accent bg-db-border/10 py-5 pl-8 pr-8 font-serif text-[clamp(1.3rem,2.4vw,1.9rem)] leading-snug text-db-text">
+          Comment modéliser par apprentissage profond et quantifier l’incertitude de la production photovoltaïque
+          à 72 heures pour sécuriser le pilotage du réseau électrique au Sénégal ?
+        </p>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
           {[
-            { n: '1', t: 'Un référentiel sans fuite', d: 'Variables unifiées, prévisions météo futures, sélection par union.' },
-            { n: '2', t: 'TCN contre TFT', d: 'Même protocole, sortie 72 h, quantiles recalibrés par CQR.' },
-            { n: '3', t: 'Preuve sur Diass', d: 'Évaluation sur données réelles, portée pour la SENELEC.' },
+            {
+              n: '1',
+              t: 'Construire le référentiel',
+              d: 'Variables unifiées de la centrale, du site et du climat sahélien, enrichies des covariables futures NWP ; sélection par union contre les fuites.',
+            },
+            {
+              n: '2',
+              t: 'Modéliser et quantifier',
+              d: 'Concevoir et comparer TCN et TFT en prévision multi-horizon 72 h ; intervalles recalibrés par CQR.',
+            },
+            {
+              n: '3',
+              t: 'Évaluer et dégager la portée',
+              d: 'Évaluer sur les données réelles de Diass, analyser les implications pour la gestion du réseau par la SENELEC.',
+            },
           ].map((o) => (
-            <div key={o.n} className="border-t-2 border-db-accent/70 pt-3">
-              <div className="font-mono text-[clamp(2rem,3.6vw,3.2rem)] leading-none text-db-accent">{o.n}</div>
-              <div className="mt-2 font-serif text-[clamp(1.2rem,2vw,1.6rem)] leading-snug text-db-text">{o.t}</div>
-              <p className={`mt-1 ${BODY}`}>{o.d}</p>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {[
-            { p: 'Partie I', t: 'Potentiel solaire et technologie PV', c: 'Chapitres 1–2' },
-            { p: 'Partie II', t: 'Architectures d’apprentissage profond', c: 'Chapitres 3–6' },
-            { p: 'Partie III', t: 'Modélisation de la prévision PV', c: 'Chapitre 7 · Diass' },
-          ].map((x, k) => (
-            <div key={x.p} className="flex items-start gap-3 border border-db-border/60 px-4 py-3">
-              <span className="font-mono text-[12px] uppercase tracking-widest text-db-accent">{k + 1}</span>
-              <div>
-                <div className="font-mono text-[12px] uppercase tracking-widest text-db-dim">{x.p} · {x.c}</div>
-                <div className="mt-1 text-[clamp(0.95rem,1.3vw,1.1rem)] text-db-text">{x.t}</div>
-              </div>
+            <div key={o.n}>
+              <div className="font-mono text-[clamp(1.6rem,2.6vw,2.4rem)] leading-none text-db-accent">{o.n}</div>
+              <div className="mt-2 font-serif text-[clamp(1.1rem,1.8vw,1.45rem)] leading-snug text-db-text">{o.t}</div>
+              <p className={`mt-2 ${BODY}`}>{o.d}</p>
             </div>
           ))}
         </div>
@@ -308,540 +324,373 @@ export const SLIDES: SlideDef[] = [
     ),
   },
 
-  /* 04 — chapitre 1 : mix, centrales, gisement */
+  /* 04 — chapitres 1 et 2 : le cadre énergétique et le gisement, le pont vers la physique en message final */
   {
     id: 's04',
-    title: 'Cadre énergétique et gisement solaire',
-    section: 'Chapitre 1',
+    title: 'Le cadre physique, du gisement à la part à prévoir',
+    section: 'Chapitres 1 et 2',
     acte: 'I',
     notes:
-      "Premier chapitre : le cadre énergétique. Le thermique domine encore, 74,7 % de la capacité installée en 2025, et 76 % de l'énergie acheminée est achetée aux producteurs indépendants : la SENELEC ne pilote pas la majorité de ce qui transite sur son réseau, d'où l'intérêt de la prévision. Le gisement solaire national est l'un des plus réguliers : le GHI annuel va de 1 825 à 2 194 kWh par mètre carré, avec un potentiel estimé à 63 920 MW. Et notre cas d'étude, Diass, est la première centrale solaire publique du pays, dont vous voyez la localisation à gauche.",
+      "Chapitres 1 et 2 : le cadre, puis la physique. Le thermique pèse 1 711 MW sur 2 290 installés, soit 74,7 %. La production brute atteint 7 486 GWh en 2025, dont 76 % d'achats aux producteurs indépendants : la SENELEC ne pilote pas la majorité de ce qui transite, d'où l'intérêt de la prévision. En face, le gisement national est l'un des meilleurs : GHI annuel de 1 825 à 2 194 kWh/m², potentiel estimé à 63 920 MW. Les centrales sont hétérogènes, modules fixes, bifaciaux, suiveurs : aucun modèle unique ne convient, chaque site exige un calage. Diass, première centrale solaire publique du pays, fournit des données d'exploitation suffisantes : c'est notre cas d'étude. Deuxième chapitre : la physique. Une part de la production se calcule exactement : la géométrie solaire, la déclinaison, l'angle d'incidence ; le pipeline reprend ces formules, figures 2.2 et 2.6 du mémoire. L'autre part est stochastique : passages nuageux, harmattan et empoussièrement, pertes thermiques. C'est cette part-là que le modèle doit apprendre. Pour l'encadrer, le chapitre fixe un référentiel unifié de variables en quatre familles : météo et climat, grandeurs électriques, exploitation et milieu, temporalité et features dérivées. Ce référentiel est la matière première de la partie III.",
     render: () => (
-      <Slide kicker="Chapitre 1 · 1.1 mix énergétique, 1.3 centrales et potentiel" title="Le thermique domine, le gisement est excellent, Diass est notre cas d’étude">
-        <div className="grid grid-cols-3 gap-6">
-          <Stat v="74,7 %" l="de la capacité installée est thermique (2025)" />
+      <Slide
+        title="Un réseau thermique sur l’un des meilleurs gisements d’Afrique"
+        gap="gap-5"
+      >
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
+          <Stat v="74,7 %" l="de la capacité installée est thermique en 2025, soit 1 711 MW sur 2 290" />
           <Stat v="76,0 %" l="de l’énergie acheminée est achetée aux producteurs indépendants" />
-          <Stat v="63 920 MW" l="de potentiel PV estimé ; GHI de 1 825 à 2 194 kWh/m²/an" tone="text-db-accent" />
+          <Stat v="63 920 MW" l="de potentiel PV estimé ; GHI annuel de 1 825 à 2 194 kWh/m²" tone="text-db-accent" />
         </div>
-        <div className="grid grid-cols-[1fr_2fr] gap-8">
-          <Fig src={fig('Central Solaire de Diass carte.png')} num="1.3" caption="Localisation de la centrale de Diass." h="h-[30vh]" />
-          <figure>
-            <div className="grid h-[30vh] grid-cols-3 gap-2 rounded-sm bg-white p-2">
-              {['ghi_senegal.png', 'dni_senegal.png', 'dhi_senegal.png'].map((f) => (
-                <img key={f} src={fig(f)} alt="Carte du gisement solaire" className="h-full w-full object-contain" />
-              ))}
-            </div>
-            <figcaption className="mt-2 font-mono text-[12px] text-db-dim">
-              <span className="text-db-accent">Figure 1.4</span> — Gisement solaire du Sénégal : GHI, DNI et DHI.
-            </figcaption>
-          </figure>
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8">
+          <Fig
+            src={fig('Central Solaire de Diass carte.png')}
+            num="1.3"
+            caption="Localisation de la centrale de Diass, première centrale solaire publique du pays."
+            h="h-[26vh]"
+          />
+          <Fig
+            src={fig('ghi_senegal.png')}
+            num="1.4"
+            caption="Gisement solaire du Sénégal : irradiance globale horizontale."
+            h="h-[26vh]"
+          />
         </div>
+        <Takeaway>
+          Une part de la production se calcule, l’autre se prévoit : c’est elle que le modèle doit apprendre.
+          Le référentiel unifié, ses quatre familles de variables, est la matière première de la partie III.
+        </Takeaway>
       </Slide>
     ),
   },
 
-  {
-    id: 's04b',
-    title: 'Mix énergétique sénégalais',
-    section: 'Chapitre 1',
-    acte: 'I',
-    notes:
-      "Le thermique pèse 1 711,14 MW sur 2 289,52 MW en 2025. Le solaire passe de 245 MW en 2022 à 292,47 MW en 2025, soit plus 19,4 %. La production brute totale atteint 7 486,3 GWh, dont 76 % d'achats. En 2023, les renouvelables pèsent 27,35 % de la capacité mais seulement 19,48 % de la production brute : c'est l'effet de l'intermittence.",
-    render: () => (
-      <Slide kicker="Chapitre 1 · mix énergétique" title="Un mix à 75 % thermique, où le solaire progresse de 19 % en trois ans" gap="gap-4">
-        <div className="max-w-5xl">
-          <LedgerRow v="1 711 / 2 290 MW" l="capacité thermique sur capacité totale en 2025 (74,7 %)" />
-          <LedgerRow v="245 → 292,47 MW" l="solaire installé de 2022 à 2025 (+19,4 %)" />
-          <LedgerRow v="7 486,3 GWh" l="production brute totale 2025, dont 5 687,1 GWh d’achats (76,0 %)" />
-          <LedgerRow v="27,35 % / 19,48 %" l="renouvelables en capacité contre en production brute (2023)" />
-        </div>
-      </Slide>
-    ),
-  },
-
-  /* 05 — chapitre 2 : physique */
+  /* 05 — chapitre 5 : le TFT, la figure à gauche et trois idées à droite */
   {
     id: 's05',
-    title: 'Physique du PV et variabilité',
-    section: 'Chapitre 2',
-    acte: 'I',
-    notes:
-      "Deuxième chapitre : la physique. Une part de la production se calcule exactement : la géométrie solaire, l'angle d'incidence, à partir des éphémérides. L'autre est stochastique : passages nuageux, harmattan, empoussièrement. La figure de droite montre les chutes d'irradiance au passage des nuages. C'est cette part-là que les modèles d'apprentissage profond doivent capturer, à partir du référentiel de variables présenté en fin de chapitre.",
-    render: () => (
-      <Slide kicker="Chapitre 2 · 2.1 rayonnement, 2.3 variabilité" title="Une part de la production se calcule, l’autre se prévoit : c’est elle que le modèle doit apprendre">
-        <div className="grid grid-cols-2 gap-8">
-          <div>
-            <Fig src={fig('fig_ch2_geometrie_solaire.png')} num="2.2" caption="Géométrie solaire et angles du panneau." h="h-[40vh]" />
-            <p className={`mt-3 ${BODY}`}>
-              <span className="text-db-text">Déterministe</span> : éphémérides, angle d’incidence.
-            </p>
-          </div>
-          <div>
-            <Fig src={fig('fig_ch4_variabilite_court_terme.png')} num="2.6" caption="Variabilité liée aux passages nuageux." h="h-[40vh]" />
-            <p className={`mt-3 ${BODY}`}>
-              <span className="text-db-text">Stochastique</span> : nuages, harmattan, empoussièrement.
-            </p>
-          </div>
-        </div>
-      </Slide>
-    ),
-  },
-
-  /* 06 — chapitres 3 et 4 : fondations et séries temporelles */
-  {
-    id: 's06',
-    title: 'Fondations et modèles pour séries temporelles',
-    section: 'Chapitres 3–4',
+    title: 'TFT : sélection, attention interprétable, quantiles natifs',
+    section: 'Chapitres 3 à 5',
     acte: 'II',
     notes:
-      "Deuxième partie : les architectures. Les chapitres 3 et 4 posent les fondations. Chapitre 3 : la boucle d'apprentissage supervisé, avec un protocole strict pour les séries temporelles : découpage chronologique, normalisation ajustée sur l'entraînement seul, validation walk-forward. Le passé prédit le futur, jamais l'inverse. Chapitre 4 : les briques pour les séries temporelles, la convolution causale dilatée, qui étend le champ réceptif sans regarder le futur, les réseaux récurrents LSTM, puis l'attention et le Transformer. TFT et TCN combinent ces briques.",
+      "Deuxième partie : les architectures. Les chapitres 3 et 4 posent d'abord l'état de l'art et le protocole : découpage chronologique, normalisation ajustée sur l'entraînement seul, validation walk-forward ; le passé prédit le futur, jamais l'inverse. Les briques, figures 3.1 et 4.3 du mémoire : la convolution causale dilatée, qui étend le champ réceptif sans regarder le futur, les réseaux récurrents LSTM, puis l'attention et le Transformer. Chapitre 5, le TFT : sa variable selection network pèse chaque variable à chaque pas de temps ; les blocs GRN à porte GLU lissent les représentations ; l'attention multi-têtes reste interprétable ; les covariables futures connues, nos prévisions météo, entrent nativement ; et la sortie est en quantiles. Sa valeur ajoutée est l'interprétabilité : l'opérateur voit pourquoi le modèle annonce une baisse à un horizon donné.",
     render: () => (
-      <Slide kicker="Chapitre 3 · fondations — Chapitre 4 · séries temporelles" title="Le passé prédit le futur, jamais l’inverse">
-        <div className="grid grid-cols-2 gap-8">
-          <div>
-            <Fig src={fig('boucle_apprentissage_supervise.jpg')} num="3.1" caption="Boucle d’apprentissage supervisé." h="h-[36vh]" />
-            <p className={`mt-3 ${BODY}`}>
-              Découpage chronologique, <span className="text-db-text">scaler ajusté sur l’entraînement seul</span>, validation walk-forward.
-            </p>
-          </div>
-          <div>
-            <Fig src={fig('1d_dilated_conv.PNG')} num="4.3" caption="Convolutions dilatées causales (d = 1, 2, 4, 8)." h="h-[36vh]" />
-            <p className={`mt-3 ${BODY}`}>
-              Convolution causale, <span className="text-db-text">LSTM</span>, attention et Transformer : les briques du TFT et du TCN.
-            </p>
+      <Slide title="Le TFT sélectionne les variables, puis pondère le passé par attention" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.5fr_1fr]">
+          <Fig
+            src={fig('TFT - Architecture Detaillee image.png')}
+            num="5.1"
+            caption="Architecture du Temporal Fusion Transformer."
+            h="h-[46vh]"
+          />
+          <div className="space-y-7">
+            <Stat v="VSN" l="chaque variable est pesée à chaque pas de temps" />
+            <Stat v="Attention" l="multi-têtes et interprétable, les poids se lisent" tone="text-db-accent" />
+            <Stat v="Quantiles natifs" l="la sortie donne P10, P50 et P90 ; les covariables météo futures entrent nativement" />
           </div>
         </div>
       </Slide>
     ),
   },
 
-  /* 07 — chapitre 5 : TFT puis TCN (ordre du mémoire) */
+  /* 06 — chapitre 5 : le TCN, trois idées à gauche et la figure à droite */
   {
-    id: 's07',
-    title: 'TFT et TCN',
+    id: 's06',
+    title: 'TCN : convolutions causales dilatées, rapides et parallèles',
     section: 'Chapitre 5',
     acte: 'II',
     notes:
-      "Chapitre 5 : les deux architectures, dans l'ordre du mémoire. Le Temporal Fusion Transformer d'abord : sélection de variables par la VSN, blocs GRN à porte GLU, attention multi-têtes interprétable, entrées futures connues et sortie en quantiles native. Sa valeur ajoutée est l'interprétabilité. Ensuite le TCN : convolutions causales dilatées, avec un noyau de 3 et 10 couches le champ réceptif atteint 2 047 pas, plus de trois semaines d'historique horaire, avec un entraînement entièrement parallélisable. En contrepartie, pas de variables statiques natives ni d'interprétabilité native.",
+      "Le TCN ensuite : des convolutions causales dilatées, un noyau de 3 et dix couches portent le champ réceptif à 2 047 pas, plus de trois semaines d'historique horaire. La séquence est traitée en parallèle et la mémoire est linéaire : l'entraînement est rapide et stable. En contrepartie, pas de variables statiques natives ni d'interprétabilité native. Deux philosophies s'affrontent : le TFT choisit l'interprétabilité, le TCN la vitesse et la simplicité. Le chapitre 6 fixe le cadre commun pour les départager.",
     render: () => (
-      <Slide kicker="Chapitre 5 · 5.1 TFT, 5.2 TCN" title="Deux façons de lire l’historique : attention interprétable ou convolutions causales">
-        <div className="grid grid-cols-2 gap-8">
-          <div>
-            <Fig src={fig('TFT - Architecture Detaillee image.png')} num="5.1" caption="Architecture du TFT." h="h-[38vh]" />
-            <p className={`mt-3 ${BODY}`}>
-              <span className="text-db-text">TFT</span> — sélection de variables, attention interprétable, quantiles natifs.
-            </p>
+      <Slide title="Le TCN : des convolutions causales dilatées, rapides et parallèles" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.5fr]">
+          <div className="space-y-7">
+            <Stat
+              v="2 047 pas"
+              l="champ réceptif : noyau 3, 10 couches dilatées, soit plus de trois semaines d’historique horaire"
+              tone="text-db-accent"
+            />
+            <Stat v="Parallélisme total" l="séquence traitée d’un bloc, mémoire linéaire, sans le coût quadratique de l’attention" />
+            <Stat v="En contrepartie" l="pas de variables statiques natives, pas d’interprétabilité native" />
           </div>
-          <div>
-            <Fig src={fig('TCN architecture.png')} num="5.5" caption="Architecture du TCN." h="h-[38vh]" />
-            <p className={`mt-3 ${BODY}`}>
-              <span className="text-db-text">TCN</span> — champ réceptif de <span className="font-mono text-db-text">2 047 pas</span>, entraînement parallèle.
-            </p>
-          </div>
+          <Fig
+            src={fig('TCN architecture.png')}
+            num="5.5"
+            caption="Architecture du TCN : blocs résiduels à convolutions causales dilatées."
+            h="h-[46vh]"
+          />
         </div>
       </Slide>
     ),
   },
 
-  /* 08 — chapitre 6 : MIMO et perte hybride */
+  /* 07 — chapitre 6 : la sortie MIMO, puis le recalibrage CQR qui la garantit */
+  {
+    id: 's07',
+    title: 'Sortie MIMO et calibration CQR',
+    section: 'Chapitre 6',
+    acte: 'II',
+    notes:
+      "Chapitre 6 : la stratégie de prévision, commune aux deux architectures. La sortie est traitée en MIMO : un seul modèle reçoit la fenêtre d'historique et produit en une passe la matrice 72 horizons par 3 quantiles, soit 216 valeurs. J'ai écarté la prévision récursive : l'erreur s'accumule sur 72 pas et il faudrait 72 entraînements. La perte est hybride, w·MSE + (1−w)·pinball : une erreur quadratique sur la médiane, une perte pinball sur les quantiles. Les croisements de quantiles mesurés sur le test sont nuls. Les quantiles appris ne garantissent pas la couverture en échantillon fini : le recalibrage conformel CQR les corrige sans réentraînement. Sur un jeu de calibration, on mesure le plus grand dépassement des bornes, on en prend le quantile, puis on l'ajoute à la borne haute et on le retire de la borne basse. Avec alpha égal à 0,20, la couverture d'au moins 80 % est garantie sous échangeabilité. L'évaluation suit cinq étapes : couverture et largeur par horizon, score propre de Winkler, diagnostic de croisement, comparaison à la climatologie.",
+    render: () => (
+      <Slide
+        title="Un modèle produit les 72 heures ; le recalibrage garantit l’enveloppe"
+        gap="gap-5"
+      >
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.5fr_1fr]">
+          <Fig
+            src={fig('mimo_flow.drawio.png')}
+            num="6.1"
+            caption="Flux MIMO : fenêtre d’historique, modèle unique, matrice H × Q."
+            h="h-[36vh]"
+          />
+          <div className="space-y-5">
+            <div className="border border-db-border/60 bg-db-border/10 px-5 py-4 text-center font-mono text-[clamp(0.95rem,1.5vw,1.2rem)] leading-relaxed text-db-text">
+              I(x) = [ ŷ<sub>bas</sub> − q, ŷ<sub>haut</sub> + q ]
+              <div className="mt-2 text-[0.75em] leading-snug text-db-muted">
+                q = quantile des scores de non-conformité sur le jeu de calibration, avec α = 0,20
+              </div>
+            </div>
+            <Stat v="72 × 3 = 216" l="quantiles P10, P50, P90 produits en une seule passe" />
+            <Stat v="≥ 80 %" l="couverture garantie après recalibrage, sans réentraînement" tone="text-db-accent" />
+          </div>
+        </div>
+        <Takeaway>
+          Sans les prévisions météo futures, aucun modèle ne produira d’intervalle utile à 72 heures : le plafond vient de
+          l’information d’entrée.
+        </Takeaway>
+      </Slide>
+    ),
+  },
+
+  /* 08 — 7.1 : la figure système pleine largeur, la démarche en une ligne de trois temps */
   {
     id: 's08',
-    title: 'Stratégie MIMO et perte hybride',
-    section: 'Chapitre 6',
-    acte: 'II',
-    notes:
-      "Chapitre 6 : la stratégie de prévision. La sortie est traitée en MIMO : un seul modèle reçoit une fenêtre d'historique et produit en une passe la matrice 72 horizons par 3 quantiles, soit 216 valeurs. J'ai écarté la prévision récursive : l'erreur s'accumule sur 72 pas et il faudrait 72 entraînements. La perte est hybride : une erreur quadratique sur la médiane et une perte pinball sur les quantiles 10, 50 et 90. Les croisements de quantiles mesurés sur le test sont nuls.",
-    render: () => (
-      <Slide kicker="Chapitre 6 · 6.1 MIMO, 6.2–6.3 quantiles et perte hybride" title="Un seul modèle produit les 72 heures, avec leurs bornes">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <Fig src={fig('mimo_flow.drawio.png')} num="6.1" caption="Flux MIMO : fenêtre d’historique, modèle unique, matrice H × Q." h="h-[46vh]" />
-          <div className="space-y-6">
-            <Stat v="72 × 3 = 216" l="quantiles (P10, P50, P90) produits en une seule passe" />
-            <Stat v="w·MSE + (1−w)·Pinball" l="médiane par l’erreur quadratique, bornes par la perte en quantiles" />
-            <Stat v="0 croisement" l="de quantiles, mesuré sur le test" tone="text-db-accent" />
-          </div>
-        </div>
-      </Slide>
-    ),
-  },
-
-  /* 09 — chapitre 6 : CQR et protocole d'évaluation */
-  {
-    id: 's09',
-    title: 'Calibration CQR et protocole d’évaluation',
-    section: 'Chapitre 6',
-    acte: 'II',
-    notes:
-      "Toujours au chapitre 6 : les quantiles appris ne garantissent pas la couverture en échantillon fini. La calibration conformelle CQR les corrige sans réentraînement. Sur un jeu de calibration, on mesure le plus grand dépassement des bornes, on prend son quantile, puis on le retire de la borne basse et on l'ajoute à la borne haute. Avec alpha égal à 20 %, la couverture d'au moins 80 % est garantie sous échangeabilité. L'évaluation suit cinq étapes : couverture et largeur par horizon, score propre de Winkler, diagnostic de croisement, comparaison à la climatologie. Un point clé : sans covariables météo futures, aucun modèle ne produit d'intervalle utile à 72 heures.",
-    render: () => (
-      <Slide kicker="Chapitre 6 · 6.4 CQR, 6.5–6.6 scores et protocole" title="Recalibrer les bornes pour garantir 80 % de couverture" gap="gap-6">
-        <div className="max-w-6xl border border-db-border/60 bg-db-border/10 px-6 py-5 font-mono text-[clamp(0.95rem,1.6vw,1.35rem)] leading-relaxed text-db-text">
-          I(x) = [ ŷ<sub>bas</sub> − q , ŷ<sub>haut</sub> + q ]
-          <div className="mt-1 text-[0.8em] text-db-muted">q = quantile des scores de non-conformité sur le jeu de calibration · α = 0,20</div>
-        </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Stat v="Sans réentraînement" l="le recalibrage s’applique au modèle déjà appris" />
-          <Stat v="≥ 80 %" l="couverture garantie sous échangeabilité" tone="text-db-accent" />
-          <Stat v="5 étapes" l="couverture, largeur, Winkler, croisements, climatologie" />
-        </div>
-        <Takeaway>Sans les prévisions météo futures, aucun modèle ne produira d’intervalle utile à 72 h : le plafond vient de l’information d’entrée.</Takeaway>
-      </Slide>
-    ),
-  },
-
-  /* 10 — 7.1 objectifs et méthodologie */
-  {
-    id: 's10',
-    title: 'Objectifs et méthodologie',
-    section: 'Chapitre 7 · 7.1',
+    title: 'Du capteur SCADA à la prévision batch : une démarche en trois temps',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Troisième partie : le chapitre 7 met tout cela à l'épreuve sur Diass. Section 7.1 : les objectifs sont de prévoir la production à 72 heures, d'y associer une enveloppe P10–P90, et de comparer plusieurs architectures sur un protocole identique. La démarche tient en trois temps, que montre la figure : construire les données, de l'export SCADA au fichier de features ; apprendre, du découpage jusqu'à la calibration ; puis l'inférence, qui produit une prévision par lots avec son enveloppe. Les sections suivantes suivent ce fil.",
+      "Troisième partie : le chapitre 7 met la méthodologie à l'épreuve sur Diass. Trois objectifs d'étude : prévoir la production à 72 heures, accompagner chaque prévision d'une enveloppe P10–P90, comparer plusieurs architectures sur un protocole identique. La démarche, que montre la figure, se déroule en trois temps : construire les données, de l'export SCADA au fichier de features enrichi par les réanalyses ; apprendre, du découpage en fenêtres jusqu'à la calibration probabiliste ; puis inférer, qui sélectionne le modèle retenu et produit une prévision par lots avec son enveloppe. Les sections suivantes suivent ce fil.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.1 objectifs et méthodologie" title="Du capteur SCADA à la prévision batch : trois temps">
+      <Slide title="Du capteur SCADA à la prévision batch : une démarche en trois temps" gap="gap-7">
         <Fig
           src={fig('Deep-Aero-SN-ensemble.drawio.png')}
           num="7.1"
           caption="Vue d’ensemble du système Deep Aero SN."
-          h="h-[50vh]"
+          h="h-[46vh]"
           className="mx-auto w-full max-w-6xl"
         />
-        <div className="grid grid-cols-3 gap-6 font-mono text-[clamp(0.85rem,1.3vw,1.1rem)]">
-          {['1 · Construire les données', '2 · Apprendre et calibrer', '3 · Inférer : prévision batch 72 h'].map((s) => (
-            <div key={s} className="border-t-2 border-db-accent/70 pt-2 text-db-text">{s}</div>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 border-t border-db-border/40 pt-4 font-mono text-[clamp(0.85rem,1.3vw,1.05rem)] md:grid-cols-3">
+          {['1. Construire les données', '2. Apprendre et calibrer', '3. Inférer : prévision batch 72 h'].map((s) => (
+            <div key={s} className="text-db-text">{s}</div>
           ))}
         </div>
       </Slide>
     ),
   },
 
-  /* 11 — 7.2 site de Diass */
+  /* 09 — 7.2 : trois chiffres du site, la figure de la pluie en appui */
+  {
+    id: 's09',
+    title: 'Un site sahélien exigeant : quatre phénomènes à capturer',
+    section: 'Chapitre 7',
+    acte: 'III',
+    notes:
+      "Section 7.2 : le site. Diass compte 85 248 modules polycristallins de 320 Wc, soit 27,28 MWc crête pour 23,1 MW publiés, sur une structure fixe inclinée à 15 degrés plein sud, pour environ 34 gigawattheures par an. Quatre phénomènes structurent la production : le cycle diurne, la variabilité nuageuse de l'hivernage, les aérosols de l'harmattan (le DNI perd 15 à 30 %, l'empoussièrement 5 à 15 %) et les pertes thermiques, la température de cellule montant à 65–75 degrés. La figure montre l'effet de la pluie : 3,7 mégawatts en moyenne les jours de pluie contre 4,0 les jours secs, soit moins 6 %.",
+    render: () => (
+      <Slide title="Un site sahélien exigeant : quatre phénomènes à capturer" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
+          <Stat v="27,28 MWc" l="85 248 modules Jinko de 320 Wc, structure fixe inclinée à 15° plein sud, 23,1 MW publiés" />
+          <Stat v="34 GWh" l="par an en moyenne ; mise en service en mai 2022, exploitée par la SENELEC" />
+          <Stat v="Harmattan" l="DNI en baisse de 15 à 30 %, empoussièrement de 5 à 15 %" tone="text-db-accent" />
+        </div>
+        <div className="mx-auto w-full max-w-5xl">
+          <Fig
+            src={fig('nb_diass_effet_pluie.png')}
+            num="7.2"
+            caption="Production journalière moyenne : 3,7 MW les jours de pluie contre 4,0 les jours secs, soit 6 % de moins."
+            h="h-[32vh]"
+          />
+        </div>
+      </Slide>
+    ),
+  },
+
+  /* 10 — 7.3 : les six sources à gauche, les chiffres de causalité et de volume à droite, plausibilité en message final */
+  {
+    id: 's10',
+    title: 'Six sources hiérarchisées, des données physiquement plausibles',
+    section: 'Chapitre 7',
+    acte: 'III',
+    notes:
+      "Section 7.3 : les données, en six sources hiérarchisées. Le SCADA de la centrale, du 30 août 2025 au 31 août 2026 au pas de 15 minutes ; NASA POWER et ERA5 pour les réanalyses ; CAMS pour les aérosols ; ECMWF IFS pour les prévisions météo injectées comme covariables futures ; Ineichen–Perez pour le ciel clair. L'ordre de priorité va de la mesure locale à NASA POWER puis ERA5. L'interpolation est limitée à 24 heures, sans extrapolation, et la vraie coupure du 9 au 15 décembre 2025 reste manquante. La règle de causalité impose init plus six heures inférieur ou égal à l'heure d'émission : sur 1 461 cycles, 1 460 sont exploitables, 8 247 fenêtres valides. Jeu final : 8 800 heures, 428 colonnes. Et le contrôle IEC 61724 valide la plausibilité : gisement reproduit à 0,5 % près, performance ratio 64,8 % dans la plage publiée, énergie annualisée à plus 0,9 %.",
+    render: () => (
+      <Slide title="Six sources hiérarchisées, des données physiquement plausibles" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl gap-x-14 gap-y-8 lg:grid-cols-[1.05fr_1fr]">
+          <div>
+            {[
+              { n: 'SCADA Schneider', d: 'mesure locale, du 30/08/2025 au 31/08/2026, pas 15 min' },
+              { n: 'NASA POWER', d: 'réanalyse : GHI et météo' },
+              { n: 'ERA5', d: 'DNI, DHI et nuages' },
+              { n: 'CAMS', d: 'aérosols et poussières' },
+              { n: 'ECMWF IFS', d: 'prévisions météo, injectées comme covariables futures' },
+              { n: 'Ciel clair', d: 'modèle d’Ineichen et Perez' },
+            ].map((s) => (
+              <div key={s.n} className="flex flex-wrap items-baseline justify-between gap-x-6 border-t border-db-border/50 py-2">
+                <span className="font-mono text-[clamp(0.9rem,1.2vw,1.05rem)] uppercase tracking-wider text-db-text">{s.n}</span>
+                <span className="text-[clamp(0.9rem,1.2vw,1.05rem)] text-db-muted">{s.d}</span>
+              </div>
+            ))}
+          </div>
+          <div className="space-y-6">
+            <Stat v="init + 6 h ≤ t" l="le run météo doit précéder l’émission ; 1 460 cycles exploitables sur 1 461" tone="text-db-accent" />
+            <Stat v="8 800 h × 428" l="jeu final, à partir de 35 196 lignes SCADA et 58 colonnes" />
+            <Stat v="Interpolation ≤ 24 h" l="sans extrapolation ; la coupure du 9 au 15 décembre 2025 reste manquante" />
+          </div>
+        </div>
+        <Takeaway>
+          Contrôle IEC 61724 : gisement reproduit à 0,5 % près, performance ratio de 64,8 % dans la plage publiée,
+          énergie annualisée à +0,9 % ; les données peuvent servir de base à la modélisation.
+        </Takeaway>
+      </Slide>
+    ),
+  },
+
+  /* 11 — EDA : trois figures, un seul message. Pas de chiffres parasites. */
   {
     id: 's11',
-    title: 'Le site de Diass',
-    section: 'Chapitre 7 · 7.2',
+    title: 'L’arc diurne domine, et l’irradiance explique la production',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Section 7.2 : le site. Diass compte 85 248 modules polycristallins, soit 27,28 MWc en continu, sur une structure fixe inclinée à 15 degrés plein sud, pour environ 34 gigawattheures par an. Le climat impose quatre phénomènes : le cycle diurne, la variabilité nuageuse de l'hivernage, les aérosols de l'harmattan avec un DNI qui perd de 15 à 30 %, et les pertes thermiques, la température de cellule montant à 65–75 degrés. La figure montre l'effet de la pluie : 3,7 mégawatts en moyenne les jours de pluie contre 4,0 les jours secs, soit moins 6 %.",
+      "Avant de modéliser, j'explore les données : section 7.3.3. Le profil journalier moyen montre l'arc diurne attendu ; la semaine du 6 juin 2026 montre la production qui épouse l'irradiance, avec des chutes brutales au passage des nuages. La matrice de corrélation confirme : l'irradiance domine la production, la couverture nuageuse joue en sens inverse. Avec le modèle NOCT, la température de cellule moyenne est de 33,3 degrés, pour une perte thermique moyenne de 3,56 %. L'épaisseur optique des aérosols vaut 0,31 en moyenne et culmine en mai. Ces effets de l'atmosphère sont ceux que le modèle devra apprendre.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.2 présentation du site" title="Un site sahélien exigeant : l’harmattan et l’hivernage pèsent sur la production">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          <Stat v="27,28 MWc" l="85 248 modules, structure fixe 15° plein sud" />
-          <Stat v="≈ 34 GWh/an" l="production, mise en service en mai 2022" />
-          <Stat v="DNI −15 à −30 %" l="en période d’harmattan" tone="text-db-accent" />
-          <Stat v="−6 %" l="de production moyenne les jours de pluie (3,7 contre 4,0 MW)" tone="text-db-accent" />
-        </div>
-        <Fig
-          src={fig('nb_diass_effet_pluie.png')}
-          num="7.2"
-          caption="Production journalière moyenne selon les périodes pluvieuses et sèches."
-          h="h-[34vh]"
-          className="mx-auto w-full max-w-5xl"
-        />
-      </Slide>
-    ),
-  },
-
-  /* 12 — 7.3.1–7.3.2 jeux de données */
-  {
-    id: 's12',
-    title: 'Jeux de données',
-    section: 'Chapitre 7 · 7.3.1–7.3.2',
-    acte: 'III',
-    notes:
-      "Section 7.3 : les données. Elles viennent de six sources hiérarchisées : le SCADA de la centrale, NASA POWER et ERA5 pour les réanalyses, CAMS pour les aérosols, ECMWF IFS pour les prévisions météo, et Ineichen–Perez pour le ciel clair. L'ordre de priorité va de la mesure locale à NASA POWER puis ERA5. L'interpolation est limitée à 24 heures, sans extrapolation, et la vraie coupure du 9 au 15 décembre 2025 est conservée. Pour les prévisions météo, la règle de causalité impose que l'initialisation du run plus six heures précède l'heure d'émission. Sur 1 461 cycles demandés, 1 460 sont exploitables, et 8 247 fenêtres sont valides. Le jeu final fait 8 800 heures et 428 colonnes.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.3.1 origine des données, 7.3.2 ingestion" title="Six sources hiérarchisées, un référentiel sans fuite d’information">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-1 md:grid-cols-3">
-          {[
-            { n: 'SCADA Schneider', d: 'mesure locale, pas de 15 min' },
-            { n: 'NASA POWER', d: 'réanalyse : GHI, météo' },
-            { n: 'ERA5', d: 'DNI, DHI, nuages' },
-            { n: 'CAMS', d: 'aérosols et poussières' },
-            { n: 'ECMWF IFS', d: 'prévisions météo (NWP)' },
-            { n: 'Ineichen–Perez', d: 'ciel clair théorique' },
-          ].map((s) => (
-            <div key={s.n} className="border-t border-db-border/50 py-2.5">
-              <div className="font-mono text-[clamp(0.9rem,1.3vw,1.1rem)] uppercase tracking-wider text-db-text">{s.n}</div>
-              <div className="mt-0.5 text-[clamp(0.9rem,1.25vw,1.05rem)] text-db-muted">{s.d}</div>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Stat v="init + 6 h ≤ t" l="règle de causalité : le run météo doit précéder l’émission" tone="text-db-accent" />
-          <Stat v="1 460 / 1 461" l="cycles NWP exploitables ; 8 247 fenêtres valides" />
-          <Stat v="8 800 h × 428" l="volume final du jeu de features (427 variables)" />
-        </div>
-      </Slide>
-    ),
-  },
-
-  /* 13 — 7.3.3 EDA : profils temporels et corrélations */
-  {
-    id: 's13',
-    title: 'EDA : profils temporels et corrélations',
-    section: 'Chapitre 7 · 7.3.3',
-    acte: 'III',
-    notes:
-      "Avant de modéliser, j'explore les données : section 7.3.3. Le profil journalier moyen montre l'arc diurne attendu : l'irradiance et la production culminent vers midi, la température suit avec environ deux heures de retard. La semaine du 6 juin 2026 montre que la production épouse l'irradiance, avec des chutes brutales au passage des nuages, qui sont la principale source d'erreur à court terme. Enfin la matrice de corrélation confirme que l'irradiance domine la production et que la couverture nuageuse joue en sens inverse.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.3.3 analyse exploratoire — profils temporels et corrélations" title="L’arc diurne domine, et l’irradiance explique la production">
-        <div className="grid grid-cols-3 gap-6">
-          <Fig src={fig('nb_diass_profil_journalier.png')} num="7.3" caption="Profil journalier moyen." h="h-[40vh]" />
-          <Fig src={fig('nb_diass_serie_semaine.png')} num="7.4" caption="Semaine du 6 juin 2026." h="h-[40vh]" />
-          <Fig src={fig('nb_diass_matrice_correlations.png')} num="7.5" caption="Matrice de corrélation." h="h-[40vh]" />
+      <Slide title="L’arc diurne domine, et l’irradiance explique la production" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-8">
+          <Fig
+            src={fig('nb_diass_profil_journalier.png')}
+            num="7.3"
+            caption="Profil journalier moyen."
+            h="h-[32vh]"
+          />
+          <Fig
+            src={fig('nb_diass_serie_semaine.png')}
+            num="7.4"
+            caption="Semaine du 6 juin 2026."
+            h="h-[32vh]"
+          />
+          <Fig
+            src={fig('nb_diass_matrice_correlations.png')}
+            num="7.5"
+            caption="Matrice de corrélation."
+            h="h-[32vh]"
+          />
         </div>
         <Takeaway>Les chutes brutales au passage des nuages sont la principale source d’erreur à court terme.</Takeaway>
       </Slide>
     ),
   },
 
-  /* 13b — 7.3.3 EDA : relations physiques */
+  /* 12 — anti-fuite : la formule en majesté, trois garde-fous */
   {
-    id: 's13b',
-    title: 'EDA : relations physiques',
-    section: 'Chapitre 7 · 7.3.3',
+    id: 's12',
+    title: 'Empêcher le modèle de « tricher » : la formule électrique ne doit pas fuiter',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "La relation entre GHI et production est quasi linéaire sous ciel clair et se disperse dès que le ciel se couvre. Avec le modèle NOCT, la température de cellule moyenne est de 33,3 degrés pour une perte thermique moyenne de 3,56 %. La variabilité du GHI augmente avec la couverture nuageuse, ce qui justifie des retards courts d'irradiance. Enfin l'épaisseur optique des aérosols vaut 0,31 en moyenne et atteint son maximum en mai. Ces effets de l'atmosphère sont ceux que le modèle devra apprendre.",
+      "Section 7.4 : la mise en œuvre, qui commence par la prévention des fuites. Les variables électriques mesurées au même instant que la cible sont reliées à la production par une égalité stricte : P égale V fois I fois cosinus phi fois racine de trois. Un modèle qui les reçoit apprend cette formule au lieu d'anticiper la météo, et serait inutilisable en exploitation. Je ne supprime pas le SCADA : je le transforme en retards de 24 heures, des indicateurs d'état connus à t moins 24 h. Les onze variables brutes interdites deviennent onze variables transformées. Enfin, toute variable corrélée à plus de 0,99 avec la cible est exclue automatiquement, sauf les drivers physiques autorisés.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.3.3 analyse exploratoire — relations physiques" title="La variabilité vient de l’atmosphère : nuages, aérosols, température">
-        <div className="grid grid-cols-3 gap-6">
-          <Stat v="33,3 °C" l="température de cellule moyenne (max 70,8 °C), perte thermique moyenne de −3,56 %" />
-          <Stat v="Nuages" l="la variabilité du GHI augmente avec la couverture nuageuse" />
-          <Stat v="AOD 0,31" l="épaisseur optique des aérosols moyenne, maximum en mai" tone="text-db-accent" />
-        </div>
-        <div className="grid grid-cols-3 gap-6">
-          <Fig src={fig('nb_diass_ghi_vs_production.png')} num="7.6" caption="Relation GHI–production, colorée par la température." h="h-[34vh]" />
-          <Fig src={fig('nb_diass_effet_nuages.png')} num="7.7" caption="Effet de la couverture nuageuse sur le GHI." h="h-[34vh]" />
-          <Fig src={fig('nb_diass_effet_aerosols.png')} num="7.8" caption="GHI selon l’épaisseur optique des aérosols." h="h-[34vh]" />
-        </div>
-      </Slide>
-    ),
-  },
-
-  /* 13c — 7.3.3 statistiques, rythmes et contrôle IEC */
-  {
-    id: 's13c',
-    title: 'Statistiques, rythmes et contrôle IEC 61724',
-    section: 'Chapitre 7 · 7.3.3',
-    acte: 'III',
-    notes:
-      "Les statistiques confirment les ordres de grandeur : GHI moyen de 242 watts par mètre carré, production moyenne de 3,9 mégawatts avec des pointes à 18,45. Quatre rythmes se dégagent : le cycle diurne domine, le cycle hebdomadaire est faible, le saisonnier oppose saison sèche et hivernage, et des perturbations ponctuelles s'y ajoutent. Les pas nocturnes seront masqués à l'évaluation. Ensuite, le contrôle selon la norme IEC 61724 : le gisement de référence est reproduit à 0,5 % près, le performance ratio de 64,8 % tombe dans la plage publiée, et l'énergie annualisée est à plus 0,9 %. Les données sont donc plausibles et peuvent servir de base à la modélisation.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.3.3 statistiques descriptives, rythmes, contrôle IEC 61724" title="Des données physiquement plausibles : le gisement est reproduit à 0,5 % près" gap="gap-6">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          <Stat v="242 W/m²" l="GHI moyen (max 1 059,53)" />
-          <Stat v="3,90 MW" l="production moyenne (max 18,45 MW)" />
-          <Stat v="−0,5 %" l="écart sur Yref (5,80 contre 5,83 h/j)" tone="text-db-accent" />
-          <Stat v="PR 64,8 %" l="dans la plage publiée 64,65–75,82 %" tone="text-db-accent" />
-        </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {[
-            ['Jour', 'cycle diurne dominant'],
-            ['Semaine', 'cycle faible mais mesurable'],
-            ['Saison', 'saison sèche contre hivernage'],
-            ['Perturbations', 'nuages, harmattan, encrassement'],
-          ].map(([t, d]) => (
-            <div key={t} className="border border-db-border/60 px-4 py-3">
-              <div className="font-mono text-[12px] uppercase tracking-widest text-db-accent">{t}</div>
-              <div className="mt-1 text-[clamp(0.9rem,1.25vw,1.05rem)] text-db-muted">{d}</div>
-            </div>
-          ))}
-        </div>
-        <Takeaway>Énergie annualisée à +0,9 % de la valeur publiée : les données peuvent servir de base à la modélisation.</Takeaway>
-      </Slide>
-    ),
-  },
-
-  /* 14 — 7.4.1 prévention du data leakage */
-  {
-    id: 's14',
-    title: 'Prévention du data leakage',
-    section: 'Chapitre 7 · 7.4.1',
-    acte: 'III',
-    notes:
-      "Section 7.4 : la mise en œuvre, qui commence par la prévention des fuites. Le problème : les variables électriques mesurées au même instant que la cible, courants, tensions, puissances, sont reliées à la production par une égalité stricte, P égale V fois I fois cosinus phi fois racine de trois. Un modèle qui les reçoit apprend cette formule au lieu d'anticiper la météo, et serait inutilisable en exploitation. Je ne supprime pas le SCADA : je le transforme en variables causales, des retards de 24 heures. Les onze variables brutes interdites sont remplacées par onze variables transformées. Enfin, toute variable corrélée à plus de 0,99 avec la cible est exclue automatiquement, sauf les drivers physiques autorisés.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.1 prévention du data leakage" title="Empêcher le modèle de « tricher » : la formule électrique ne doit pas fuiter" gap="gap-6">
-        <div className="max-w-6xl border border-db-border/60 bg-db-border/10 px-6 py-5 font-mono text-[clamp(1rem,1.8vw,1.5rem)] text-db-text">
+      <Slide title="Empêcher le modèle de « tricher » : la formule électrique ne doit pas fuiter" gap="gap-9">
+        <div className="mx-auto w-full max-w-4xl border border-db-border/60 bg-db-border/10 px-10 py-7 text-center font-mono text-[clamp(1.2rem,2.2vw,1.8rem)] text-db-text">
           P<sub>ac</sub> = V<sub>ac</sub> × I<sub>ac</sub> × cos φ × √3
-          <div className="mt-1 text-[0.7em] text-db-muted">les mesures contemporaines de la cible donneraient la réponse au modèle</div>
+          <div className="mt-2 text-[0.65em] leading-snug text-db-muted">
+            les mesures contemporaines de la cible donneraient la réponse au modèle
+          </div>
         </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Stat v="Retards 24 h" l="les mesures brutes deviennent des indicateurs d’état connus à t−24 h (96 pas)" tone="text-db-accent" />
-          <Stat v="11 → 11" l="variables brutes interdites, remplacées par des variables transformées" />
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
+          <Stat v="Retards de 24 h" l="les mesures brutes deviennent des indicateurs d’état connus à t−24 h, soit 96 pas de retard" tone="text-db-accent" />
+          <Stat v="11" l="variables brutes interdites, toutes remplacées par des variables transformées" />
           <Stat v="|ρ| > 0,99" l="exclusion automatique, sauf irradiance, position solaire, nuages" />
         </div>
       </Slide>
     ),
   },
 
-  /* 15 — 7.4.2 ingénierie des variables */
+  /* 13 — features puis sélection : le pipeline à gauche, la trajectoire de 58 à 424 variables à droite */
   {
-    id: 's15',
-    title: 'Ingénierie des variables',
-    section: 'Chapitre 7 · 7.4.2',
+    id: 's13',
+    title: 'De 58 colonnes brutes à 424 variables retenues, sans fuite',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Section 7.4.2 : l'ingénierie des variables. Le pipeline charge le fichier brut et exécute six opérations : rééchantillonnage horaire, contrôles Great Expectations, prétraitement avec interpolation limitée, sept étapes de construction de variables, nettoyage, puis sélection. Les sept étapes couvrent l'encodage cyclique du temps, la météo, la fréquence réseau, la physique solaire, la transformation électrique causale et les retards. En bilan : 58 colonnes brutes entrent, 543 variables sortent à la sélection.",
+      "Sections 7.4.2 et 7.4.3 : l'ingénierie puis la sélection. Le pipeline exécute six opérations : rééchantillonnage horaire, contrôles Great Expectations, prétraitement avec interpolation limitée, sept étapes de construction de variables (encodage cyclique du temps, météo, fréquence réseau, physique solaire, électrique causal, retards), puis nettoyage et sélection. 58 colonnes brutes donnent 543 variables. La sélection applique sept méthodes indépendantes et retient leur union : 194 variables ne sont retenues que par une seule méthode, un vote majoritaire les écarterait. Après suppression de 118 redondances à corrélation supérieure à 0,90, 424 variables restent, et aucune famille n'est sacrifiée.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.2 ingénierie des variables" title="Un pipeline en six opérations : 58 colonnes brutes, 543 variables construites">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.5fr_1fr]">
+      <Slide title="De 58 colonnes brutes à 424 variables retenues, sans fuite" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.5fr_1fr]">
           <Fig
             src={fig('features_pipline_flow.drawio_.png')}
             num="7.9"
             caption="Pipeline de feature engineering et contrôles anti-fuite."
-            h="h-[46vh]"
+            h="h-[44vh]"
           />
-          <div className="space-y-6">
-            <Stat v="6 opérations" l="rééchantillonnage, contrôles, prétraitement, construction, nettoyage, sélection" />
-            <Stat v="7 étapes" l="de construction : temps, météo, réseau, physique solaire, électrique causal, retards" />
-            <Stat v="58 → 543" l="colonnes brutes puis variables construites" tone="text-db-accent" />
+          <div className="space-y-8">
+            <Stat v="78,1 %" l="des variables construites sont retenues : 424 sur 543, à partir de 58 colonnes brutes" tone="text-db-accent" />
+            <Stat v="Union de 7 méthodes" l="194 variables ne sont retenues que par une seule : le vote majoritaire les écarterait" />
+            <Stat v="118" l="redondances supprimées, corrélations au-delà de 0,90 en valeur absolue" />
           </div>
         </div>
       </Slide>
     ),
   },
 
-  /* 16 — 7.4.3 sélection */
+  /* 14 — entraînement : une figure (les courbes), trois chiffres resserrés */
   {
-    id: 's16',
-    title: 'Sélection de variables',
-    section: 'Chapitre 7 · 7.4.3',
+    id: 's14',
+    title: 'Cinq modèles, un même protocole d’entraînement',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Section 7.4.3 : la sélection. Sept méthodes indépendantes sont appliquées, et la sélection finale est leur union : corrélation, information mutuelle, ACP, élimination récursive, VIF, permutation et SHAP. Elles s'accordent peu : aucune variable n'est retenue par les sept, et 194 ne le sont que par une seule. Un vote majoritaire écarterait ce que seule une méthode sait isoler, donc je garde l'union. De 543 variables, 424 sont retenues, après suppression de 118 redondances à corrélation supérieure à 0,90. La répartition par famille montre qu'aucune famille n'est sacrifiée. Je détaille la sélection par méthode à la planche suivante.",
+      "Sections 7.4.4 à 7.4.6 : l'apprentissage. Cinq modèles sur un protocole commun : la persistance comme repère minimal, le MLP et le LSTM comme repères appris, et le TCN et le TFT, seuls à recevoir les covariables météo futures et à produire des prévisions probabilistes avec la perte hybride. Les hyperparamètres sont cherchés par Optuna, échantillonneur TPE, dix essais, graine 42 figée, élagage par la médiane. La validation sert à arrêter tôt : patience de 25 époques, le TCN s'arrête à 57, le TFT va à 100 ; l'entraînement a coût 1 206 secondes au TCN et 2 016 au TFT. Les courbes montrent une convergence régulière, sans surapprentissage marqué. Enfin le recalibrage CQR, alpha 0,20, est appliqué sur la validation. Le pipeline complet de cette étape est la figure 7.13 du mémoire.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.3 sélection de variables" title="Sept méthodes, une union : 424 variables retenues sur 543">
-        <div className="grid grid-cols-2 gap-8">
-          <Fig src={fig('nb_diass_sel_volume.png')} num="7.10" caption="Variables retenues par méthode de sélection." h="h-[40vh]" />
-          <Fig src={fig('nb_diass_sel_familles.png')} num="7.12" caption="Répartition des 424 variables par famille." h="h-[40vh]" />
-        </div>
-        <div className="grid grid-cols-3 gap-6">
-          <Stat v="194" l="variables ne sont retenues que par une seule méthode" />
-          <Stat v="118" l="redondances supprimées (|r| > 0,90)" />
-          <Stat v="424 (78,1 %)" l="variables retenues, aucune famille sacrifiée" tone="text-db-accent" />
-        </div>
-      </Slide>
-    ),
-  },
-
-  {
-    id: 's16b',
-    title: 'Sélection : détail par méthode',
-    section: 'Chapitre 7 · 7.4.3',
-    acte: 'III',
-    notes:
-      "le tableau 7.7. Corrélation 349 variables, RFE 50, VIF 527, et 2 chacune pour l'information mutuelle, la permutation et SHAP, 0 pour l'ACP. Union brute de 542, dédupliquée à 424. Répartition par famille : lags et fenêtres J moins 1 : 137, réanalyse : 123, autres : 62, météo locale : 54, physique PV : 23, rendement onduleur : 15, temporel : 10.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.3 sélection — détail par méthode" title="Aucune famille n’est sacrifiée : 543 variables deviennent 424" gap="gap-3">
-        <Fig
-          src={fig('nb_diass_sel_top12.png')}
-          num="7.11"
-          caption="Top-12 des features par méthode de sélection."
-          h="h-[42vh]"
-          className="mx-auto w-full max-w-5xl"
-        />
-        <p className="text-[clamp(0.9rem,1.25vw,1.05rem)] leading-snug text-db-muted">
-          Corrélation 349 · RFE 50 · VIF 527 · MI, permutation, SHAP : 2 chacune · PCA : 0 · union brute 542 → 424.
-          Familles : lags J−1 137 · réanalyse 123 · autres 62 · météo locale 54 · physique PV 23 · onduleur 15 · temporel 10.
-        </p>
-      </Slide>
-    ),
-  },
-
-  /* 17 — 7.4.4–7.4.6 algorithmes, entraînement, validation */
-  {
-    id: 's17',
-    title: 'Algorithmes, entraînement et validation',
-    section: 'Chapitre 7 · 7.4.4–7.4.6',
-    acte: 'III',
-    notes:
-      "Sections 7.4.4 à 7.4.6. Je compare cinq modèles sur un protocole commun : la persistance comme repère minimal, le MLP et le LSTM comme repères appris, et le TCN et le TFT, seuls à recevoir les prévisions météo futures et à produire des prévisions probabilistes, avec la perte hybride. Les hyperparamètres sont cherchés par Optuna, échantillonneur TPE, dix essais, et le meilleur essai est figé avec la graine 42. La validation sert à arrêter l'entraînement, avec une patience de 25 époques : le TCN s'arrête à l'époque 57, le TFT va jusqu'aux 100. Les courbes montrent une convergence régulière sans surapprentissage marqué. Le recalibrage CQR, alpha égal à 0,20, est ensuite appliqué sur la validation. Les hyperparamètres retenus suivent.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.4 algorithmes, 7.4.5 entraînement, 7.4.6 validation" title="Cinq modèles, même protocole, hyperparamètres cherchés par Optuna">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          <Stat v="5 modèles" l="persistance, MLP, LSTM, TCN, TFT" />
-          <Stat v="Optuna" l="TPE, 10 essais, graine 42, meilleur essai figé" />
-          <Stat v="57 / 100" l="époques du TCN / du TFT (patience 25)" />
-          <Stat v="1 206 / 2 016 s" l="temps d’entraînement du TCN / du TFT" />
-        </div>
-        <div className="grid grid-cols-2 gap-8">
-          <Fig src={fig('puml_03_pipeline_training.png')} num="7.13" caption="Pipeline d’entraînement : découpage, Optuna, early stopping, CQR." h="h-[34vh]" />
-          <Fig src={fig('nb_diass_learning_curves.png')} num="7.14" caption="Courbes d’entraînement du TCN et du TFT." h="h-[34vh]" />
-        </div>
-      </Slide>
-    ),
-  },
-
-  {
-    id: 's17b',
-    title: 'Hyperparamètres et temps',
-    section: 'Chapitre 7 · 7.4.5',
-    acte: 'III',
-    notes:
-      "le tableau 7.9. TCN : poids w de 0,765, canaux 64-128-256-256, noyau 5, dropout 0,252, lots de 64, montée cosinus de 5 époques, taux 3,29e-4. TFT : w de 0,617, dimension 256 sur 2 têtes, dropout 0,15, lots de 128, plateau, taux 6,92e-4. Temps : 3 secondes pour la persistance, 519 pour le MLP, 863 pour le LSTM, 1 206 pour le TCN, 2 016 pour le TFT.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.5 hyperparamètres" title="Hyperparamètres retenus : le TCN s’entraîne en 20 min, le TFT en 34 min" gap="gap-4">
-        <div className="grid items-start gap-8 lg:grid-cols-2">
-          <div>
-            <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">TCN</div>
-            <LedgerRow v="w" l="0,765" />
-            <LedgerRow v="Canaux" l="64, 128, 256, 256 ; noyau 5" />
-            <LedgerRow v="Dropout" l="0,252 ; lots de 64" />
-            <LedgerRow v="Optimiseur" l="taux 3,29e−4 ; montée cosinus de 5 époques" />
-          </div>
-          <div>
-            <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">TFT</div>
-            <LedgerRow v="w" l="0,617" />
-            <LedgerRow v="Dimension" l="256 sur 2 têtes d’attention" />
-            <LedgerRow v="Dropout" l="0,15 ; lots de 128" />
-            <LedgerRow v="Optimiseur" l="taux 6,92e−4 ; plateau" />
+      <Slide title="Cinq modèles, un même protocole d’entraînement" gap="gap-8">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
+          <Fig
+            src={fig('nb_diass_learning_curves.png')}
+            num="7.14"
+            caption="Courbes d’entraînement du TCN et du TFT : convergence régulière, arrêt à 57 et 100 époques."
+            h="h-[44vh]"
+          />
+          <div className="space-y-7">
+            <Stat
+              v="5 modèles"
+              l="persistance, MLP, LSTM, TCN, TFT ; seuls TCN et TFT sont probabilistes"
+            />
+            <Stat v="57 puis 100" l="époques du TCN puis du TFT, patience de 25" tone="text-db-accent" />
+            <Stat v="CQR" l="recalibrage appliqué sur la validation, α = 0,20" />
           </div>
         </div>
-        <p className="text-[clamp(0.9rem,1.25vw,1.05rem)] text-db-muted">
-          Temps : persistance 3 s · MLP 519 s · LSTM 863 s · TCN 1 206 s · TFT 2 016 s.
-        </p>
       </Slide>
     ),
   },
 
+  /* 15 — inférence : la prévision à gauche, trois points à droite */
   {
-    id: 's18a',
-    title: 'Pipeline de serving',
-    section: 'Chapitre 7 · 7.4.7',
+    id: 's15',
+    title: 'Une prévision batch de 72 heures, enveloppe P10 à P90 incluse',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Le pipeline de serving et d'inférence batch de la section 7.4.7, de la requête du client jusqu'au fichier de prévisions.",
+      "Section 7.4.7 : l'inférence. Le pipeline sélectionne le modèle retenu, assemble l'historique jusqu'à la dernière heure disponible, ajoute les prévisions météo futures, et produit en mode batch une prévision à 72 heures avec son enveloppe P10–P90. Sur le run courant, la médiane de la prévision du site vaut 0,965 mégawatt. L'enveloppe s'élargit avec l'horizon : c'est attendu, la largeur étant un quantile absolu des résidus de calibration.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.7 pipeline de serving" title="De la requête au fichier de prévisions : un pipeline batch à 72 h">
-        <Fig
-          src={fig('puml_04_serving_inference.png')}
-          num="7.15"
-          caption="Pipeline de serving et d’inférence batch."
-          h="h-[56vh]"
-          className="mx-auto w-full max-w-6xl"
-        />
-      </Slide>
-    ),
-  },
-
-  /* 18 — 7.4.7 inférence */
-  {
-    id: 's18',
-    title: 'Inférence : prévision batch à 72 h',
-    section: 'Chapitre 7 · 7.4.7',
-    acte: 'III',
-    notes:
-      "Section 7.4.7 : l'inférence. Le pipeline sélectionne le modèle retenu, assemble les données jusqu'à la dernière heure disponible, ajoute les prévisions météo futures et produit en mode batch une prévision à 72 heures avec son enveloppe P10–P90. Sur le run courant, la médiane de la prévision du site vaut 0,965 mégawatt. L'enveloppe s'élargit avec l'horizon : c'est attendu, car la largeur est un quantile absolu des résidus de calibration.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.4.7 inférence" title="Une prévision batch de 72 h, enveloppe P10–P90 incluse">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.5fr_1fr]">
-          <Fig src={fig('nb_diass_prevision_batch_72h.png')} num="7.16" caption="Prévision batch à 72 h : P50 et enveloppe P10–P90." h="h-[46vh]" />
-          <div className="space-y-6">
+      <Slide title="Une prévision batch de 72 heures, enveloppe P10 à P90 incluse" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.5fr_1fr]">
+          <Fig
+            src={fig('nb_diass_prevision_batch_72h.png')}
+            num="7.16"
+            caption="Prévision batch à 72 heures : médiane P50 et enveloppe P10 à P90."
+            h="h-[42vh]"
+          />
+          <div className="space-y-8">
             <Stat v="P50 = 0,965 MW" l="médiane de la prévision du site, run courant" />
-            <Stat v="Enveloppe croissante" l="la largeur P10–P90 augmente avec l’horizon" tone="text-db-accent" />
+            <Stat v="Enveloppe croissante" l="la largeur entre P10 et P90 augmente avec l’horizon" tone="text-db-accent" />
             <Stat v="Mode batch" l="modèle retenu, nouvelle prévision à chaque émission" />
           </div>
         </div>
@@ -849,170 +698,139 @@ export const SLIDES: SlideDef[] = [
     ),
   },
 
-  /* 19 — 7.5.1 performances ponctuelles */
+  /* 16 — résultats : le tableau centré, les couvertures CQR en dessous, un message de jugement */
   {
-    id: 's19',
-    title: 'Résultats : performances ponctuelles',
-    section: 'Chapitre 7 · 7.5.1 et 7.5.4',
+    id: 's16',
+    title: 'Sur 1 049 fenêtres, le TCN domine et son enveloppe couvre 79,8 % des observations',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Section 7.5 : les résultats, sur 1 049 fenêtres de test couvrant du 16 juillet au 28 août 2026. Le TCN est le plus précis : RMSE de 1,707 mégawatt, MAE de 0,989, R carré de 0,877. Le TFT le suit de près, avec 1,818 et un R carré de 0,861. Les repères sont nettement en retrait : la persistance est à 6,9 mégawatts. Le MAPE est très élevé pour tous car la production est presque nulle en début et fin de journée : je m'appuie donc sur le RMSE et le R carré. Que le TCN devance le TFT est une hypothèse : la convolution dilatée capte mieux le motif diurne et il a moins de paramètres, mais je n'ai pas mené d'étude d'ablation.",
+      "Section 7.5 : les résultats, sur 1 049 fenêtres de test couvrant du 16 juillet au 28 août 2026. Le TCN est le plus précis : RMSE 1,707 MW, MAE 0,989, R carré 0,877. Le TFT suit de près : 1,818 MW, R carré 0,861. Les repères sont nettement en retrait : la persistance est à 6,9 MW avec un R carré négatif. La MAPE est très élevée pour tous car la production est presque nulle en début et fin de journée : je m'appuie donc sur le RMSE et le R carré. Côté incertitude : le TCN passe de 60,8 % de couverture à 79,8 % après CQR, proche de la cible de 80 % ; le TFT de 71 à 74,2 %. Aucun croisement de quantiles. L'écart entre les deux architectures est modeste : c'est la couverture calibrée qui les départage.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.5.1 performances ponctuelles, 7.5.4 discussion" title="Le TCN est le plus précis : RMSE de 1,707 MW sur 1 049 fenêtres de test">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <Fig src={fig('nb_diass_comparaison_metriques.png')} num="7.17" caption="Comparaison des métriques RMSE, MAE et R² sur le test." h="h-[42vh]" />
-          <div>
-            <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">RMSE (MW)</div>
-            {[
-              ['Persistance', '6,905', false],
-              ['MLP', '2,323', false],
-              ['LSTM', '2,043', false],
-              ['TCN', '1,707', true],
-              ['TFT', '1,818', false],
-            ].map(([m, v, hi]) => (
-              <div key={m as string} className="flex items-baseline justify-between border-t border-db-border/50 py-2">
-                <span className={`font-mono text-[clamp(1rem,1.5vw,1.3rem)] ${hi ? 'text-db-accent' : 'text-db-muted'}`}>{m}</span>
-                <span className={`font-mono text-[clamp(1.1rem,1.8vw,1.6rem)] tabular-nums ${hi ? 'text-db-accent' : 'text-db-text'}`}>{v}</span>
-              </div>
-            ))}
-            <div className="mt-3 text-[clamp(0.9rem,1.25vw,1.05rem)] text-db-muted">
-              R² : <span className="font-mono text-db-text">0,877</span> (TCN), <span className="font-mono text-db-text">0,861</span> (TFT)
-            </div>
-          </div>
-        </div>
-        <Takeaway>Le TCN devance le TFT : hypothèse (motif diurne, moins de paramètres), sans étude d’ablation.</Takeaway>
-      </Slide>
-    ),
-  },
-
-  {
-    id: 's19b',
-    title: 'Métriques complètes',
-    section: 'Chapitre 7 · 7.5.1–7.5.2',
-    acte: 'III',
-    notes:
-      "les tableaux 7.10 et 7.11. Le R carré de la persistance est négatif, moins 1,013 : elle est pire que la moyenne sur ces séries très variables. Le MAPE n'est pas fiable près de zéro. Avant recalibrage, la couverture du TCN est de 0,608 pour une largeur de 1,670 mégawatt ; après CQR, 0,798 pour 2,596. Pour le TFT, 0,713 pour 2,456 avant, 0,742 pour 2,646 après.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.5.1–7.5.2 métriques complètes" title="Sur 1 049 fenêtres, le TCN domine à toutes les métriques ponctuelles" gap="gap-4">
-        <div className="max-w-5xl">
-          <div className="grid grid-cols-5 gap-4 border-b border-db-border/60 pb-2 font-mono text-[12px] uppercase tracking-widest text-db-dim">
+      <Slide
+        title="Sur 1 049 fenêtres, le TCN domine et son enveloppe couvre 79,8 % des observations"
+        gap="gap-6"
+      >
+        <div className="mx-auto w-full max-w-5xl">
+          <div className="grid grid-cols-6 gap-4 border-b border-db-border/60 pb-2 font-mono text-[12px] uppercase tracking-widest text-db-dim">
             <span>Modèle</span>
-            <span>RMSE (MW)</span>
-            <span>MAE (MW)</span>
-            <span>nRMSE</span>
+            <span>RMSE, MW</span>
+            <span>MAE, MW</span>
             <span>R²</span>
+            <span>Couverture</span>
+            <span>Largeur, MW</span>
           </div>
           {[
-            ['Persistance', '6,905', '4,987', '0,444', '−1,013'],
-            ['MLP', '2,323', '1,275', '0,149', '0,772'],
-            ['LSTM', '2,043', '1,148', '0,131', '0,824'],
-            ['TCN', '1,707', '0,989', '0,110', '0,877'],
-            ['TFT', '1,818', '1,157', '0,117', '0,861'],
+            ['Persistance', '6,905', '4,987', '−1,013', '', ''],
+            ['MLP', '2,323', '1,275', '0,772', '', ''],
+            ['LSTM', '2,043', '1,148', '0,824', '', ''],
+            ['TCN', '1,707', '0,989', '0,877', '79,8 %', '2,596'],
+            ['TFT', '1,818', '1,157', '0,861', '74,2 %', '2,646'],
           ].map((r) => (
-            <div key={r[0]} className="grid grid-cols-5 gap-4 border-b border-db-border/40 py-2.5 font-mono text-[clamp(0.95rem,1.4vw,1.2rem)] tabular-nums text-db-text">
+            <div key={r[0]} className="grid grid-cols-6 gap-4 border-b border-db-border/40 py-2.5 font-mono text-[clamp(0.95rem,1.4vw,1.2rem)] tabular-nums text-db-text">
               <span className="text-db-accent">{r[0]}</span>
               <span>{r[1]}</span>
               <span>{r[2]}</span>
               <span>{r[3]}</span>
-              <span>{r[4]}</span>
+              <span>{fr(r[4])}</span>
+              <span>{r[5]}</span>
             </div>
           ))}
+          <p className={`mt-3 ${BODY}`}>
+            Couverture et largeur mesurées après recalibrage, pour les seuls modèles probabilistes.
+          </p>
         </div>
-        <div className="grid max-w-5xl gap-x-10 md:grid-cols-2">
-          <LedgerRow v="TCN" l="couverture 0,608 → 0,798 ; largeur 1,670 → 2,596 MW" />
-          <LedgerRow v="TFT" l="couverture 0,713 → 0,742 ; largeur 2,456 → 2,646 MW" />
+        <Takeaway>
+          L’écart entre les deux architectures est modeste : c’est la couverture de l’enveloppe après CQR qui les
+          départage.
+        </Takeaway>
+      </Slide>
+    ),
+  },
+
+  /* 17 — SENELEC : les fenêtres de test à gauche, la lecture opérationnelle à droite */
+  {
+    id: 's17',
+    title: 'Une erreur de 1,7 MW devant un seuil de dispatch de 5 MW',
+    section: 'Chapitre 7',
+    acte: 'III',
+    notes:
+      "La figure 7.18 montre des fenêtres de test : le TCN reproduit bien le cycle diurne et suit les variations rapides dues aux nuages ; ses écarts les plus nets apparaissent aux transitions jour–nuit. Section 7.5.5 : que valent ces résultats pour la SENELEC ? Le réseau a peu de marge de manœuvre. Comme hypothèse de travail, je retiens un seuil indicatif de 5 mégawatts pour le dispatch quotidien, soit 22 % de la capacité publiée : le TCN est à 1,7 MW, la marge est confortable. Concrètement, la borne haute P90 dimensionne la réserve de sécurité à mobiliser ; la borne basse P10 donne la production sur laquelle compter sans démarrer le thermique inutilement ; et la distribution des quantiles estime la probabilité de franchir un seuil critique, par exemple 10 % de la capacité.",
+    render: () => (
+      <Slide title="Une erreur de 1,7 MW devant un seuil de dispatch de 5 MW" gap="gap-6">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.4fr_1fr]">
+          <Fig
+            src={fig('nb_diass_fenetres_test.png')}
+            num="7.18"
+            caption="Fenêtres de test représentatives : médiane P50, enveloppe P10 à P90, production réelle."
+            h="h-[40vh]"
+          />
+          <div>
+            <div className="grid grid-cols-1 gap-7">
+              <Stat v="5 MW" l="seuil indicatif de dispatch quotidien, retenu comme hypothèse de travail, soit 22 % de la capacité publiée" />
+              <Stat v="1,707 MW" l="RMSE du TCN, largement sous le seuil" tone="text-db-accent" />
+            </div>
+            <ul className={`mt-7 space-y-3 ${BODY}`}>
+              <li>
+                <span className="text-db-text">P90</span> dimensionne la réserve de sécurité à mobiliser
+              </li>
+              <li>
+                <span className="text-db-text">P10</span> donne la production sur laquelle compter sans démarrer le thermique
+              </li>
+              <li>
+                {fr('les quantiles estiment la probabilité de franchir un seuil critique, par exemple 10 % de la capacité')}
+              </li>
+            </ul>
+          </div>
         </div>
       </Slide>
     ),
   },
 
-  /* 20 — 7.5.2–7.5.3 performances probabilistes et fenêtres de test */
+  /* 18 — conclusion : trois chiffres, la boucle du fil, limites et perspectives, merci */
   {
-    id: 's20',
-    title: 'Résultats : performances probabilistes',
-    section: 'Chapitre 7 · 7.5.2–7.5.3',
+    id: 's18',
+    title: 'Une chaîne validée de bout en bout sur les données réelles de Diass',
+    section: 'Chapitre 7',
     acte: 'III',
     notes:
-      "Côté incertitude : avant recalibrage, la couverture P10–P90 du TCN n'est que de 60,8 %, ses quantiles bruts sont trop étroits. Après CQR elle atteint 79,8 %, proche de la cible de 80 %. Pour le TFT, la couverture passe d'environ 71 % à 74,2 %, un peu sous la cible. Le recalibrage a donc plus d'effet sur le TCN. Aucun croisement de quantiles n'apparaît. La figure montre des fenêtres de test représentatives : le TCN reproduit bien le cycle diurne et suit les variations rapides dues aux nuages, ses écarts les plus nets étant aux transitions jour–nuit.",
+      "En conclusion, la chaîne complète est validée de bout en bout sur un site réel. Les trois objectifs sont tenus : un référentiel sans fuite (543 variables construites, 424 retenues) ; deux architectures comparées à enveloppe calibrée ; et une preuve sur données réelles avec une portée opérationnelle. Le TCN devance légèrement le TFT en précision et en couverture calibrée, tandis que le TFT conserve une interprétabilité que le TCN n'offre pas. Deux limites : une seule année d'entraînement, donc la stabilité des hyperparamètres d'une saison à l'autre n'est pas garantie ; le pas horaire lisse les nuages de moins d'une heure et plafonne la précision à 72 heures ; à quoi s'ajoute le coût mémoire de l'attention du TFT. Trois prolongements : transférer le pipeline à un autre site, un modèle dédié aux horizons de 1 à 6 heures au pas de 5 à 15 minutes, et l'apprentissage fédéré. Sur le plan opérationnel, une intégration progressive à la gestion du réseau de la SENELEC, avec des phases pilotes sur Diass. Merci de votre attention.",
     render: () => (
-      <Slide kicker="Chapitre 7 · 7.5.2 performances probabilistes, 7.5.3 fenêtres de test" title="Après recalibrage CQR, l’enveloppe du TCN couvre 79,8 % des observations">
-        <div className="grid grid-cols-3 gap-6">
-          <Stat v="60,8 % → 79,8 %" l="TCN : couverture P10–P90 avant puis après CQR (cible 80 %)" tone="text-db-accent" />
-          <Stat v="71 % → 74,2 %" l="TFT : couverture avant puis après CQR" />
-          <Stat v="0 croisement" l="de quantiles, pour les deux modèles" />
+      <Slide title="Une chaîne validée de bout en bout sur les données réelles de Diass" gap="gap-8">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
+          <Stat v="1,707 MW" l="RMSE du TCN à 72 heures, R² de 0,877" tone="text-db-accent" />
+          <Stat v="79,8 %" l="couverture recalibrée des bornes P10 et P90, cible de 80 %" tone="text-db-accent" />
+          <Stat v="424 variables" l="retenues sur 543 construites, sans fuite" tone="text-db-accent" />
         </div>
-        <Fig
-          src={fig('nb_diass_fenetres_test.png')}
-          num="7.18"
-          caption="Fenêtres de test représentatives : P50, P10–P90 et production réelle."
-          h="h-[38vh]"
-          className="mx-auto w-full max-w-5xl"
-        />
-      </Slide>
-    ),
-  },
-
-  /* 21 — 7.5.5 implications pour la SENELEC */
-  {
-    id: 's21',
-    title: 'Implications pour la SENELEC',
-    section: 'Chapitre 7 · 7.5.5',
-    acte: 'III',
-    notes:
-      "Section 7.5.5 : que valent ces résultats pour la SENELEC ? Le réseau a peu de marge de manœuvre. Comme hypothèse de travail, je retiens un seuil indicatif de 5 mégawatts acceptable pour le dispatch quotidien, soit 22 % de la capacité publiée : les deux architectures le respectent largement, avec 1,7 pour le TCN. Concrètement, la borne haute P90 dimensionne la réserve de sécurité à mobiliser. La borne basse P10 indique la production sur laquelle on peut compter sans démarrer de thermique inutilement. Et la distribution des quantiles permet d'estimer la probabilité de franchir un seuil critique, ce que la seule prévision ponctuelle ne donne pas.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.5.5 implications pour la SENELEC" title="Une erreur de 1,7 MW devant un seuil de dispatch de 5 MW" gap="gap-7">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Stat v="5 MW" l="seuil indicatif de dispatch quotidien (hypothèse de travail, 22 % de la capacité publiée)" />
-          <Stat v="1,707 MW" l="RMSE du TCN, largement sous le seuil" tone="text-db-accent" />
-          <Stat v="23,1 MW" l="capacité publiée de Diass (27,3 MWc installés)" />
-        </div>
-        <div className="max-w-6xl">
-          <LedgerRow v="P90" l="borne haute : dimensionne la réserve de sécurité à mobiliser" tone="text-db-accent" />
-          <LedgerRow v="P10" l="borne basse : production sur laquelle compter sans thermique inutile" tone="text-db-accent" />
-          <LedgerRow v="Quantiles" l="probabilité de franchir un seuil critique (par exemple 10 % de la capacité)" tone="text-db-accent" />
-        </div>
-      </Slide>
-    ),
-  },
-
-  /* 22 — 7.6 conclusion et perspectives */
-  {
-    id: 's22',
-    title: 'Conclusion et perspectives',
-    section: 'Chapitre 7 · 7.6',
-    acte: 'III',
-    notes:
-      "En conclusion, l'étude de Diass valide la chaîne complète, de l'exploration des données à l'évaluation probabiliste. Le feature engineering fournit 543 variables dont 424 retenues. Le TCN devance légèrement le TFT en précision et en couverture calibrée, tandis que le TFT conserve une interprétabilité que le TCN n'offre pas. Deux limites : une seule année d'entraînement, donc la stabilité des hyperparamètres d'une saison à l'autre n'est pas garantie, et le pas horaire qui lisse les nuages de moins d'une heure et plafonne la précision à 72 heures ; à quoi s'ajoute le coût mémoire de l'attention du TFT. Trois prolongements : transférer le pipeline à un autre site, un modèle dédié aux horizons de 1 à 6 heures au pas de 5 à 15 minutes, et l'apprentissage fédéré. Sur le plan opérationnel, une intégration progressive à la gestion du réseau de la SENELEC, avec des phases pilotes sur Diass. Merci de votre attention.",
-    render: () => (
-      <Slide kicker="Chapitre 7 · 7.6 conclusion et perspectives" title="Une chaîne validée de bout en bout sur les données réelles de Diass" gap="gap-7">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Stat v="1,707 MW" l="RMSE du TCN à 72 h (R² = 0,877)" tone="text-db-accent" />
-          <Stat v="79,8 %" l="couverture P10–P90 recalibrée (cible 80 %)" tone="text-db-accent" />
-          <Stat v="424 / 543" l="variables retenues, sans fuite" tone="text-db-accent" />
-        </div>
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div className="border border-db-border/60 px-6 py-5">
+        <div className="mx-auto grid max-w-6xl gap-x-12 gap-y-6 border-t border-db-border/40 pt-6 md:grid-cols-3">
+          <div>
+            <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">Objectifs tenus</div>
+            <p className={`mt-3 ${BODY}`}>
+              Un référentiel sans fuite, deux architectures comparées à enveloppe calibrée, une preuve sur
+              données réelles pour la SENELEC.
+            </p>
+          </div>
+          <div>
             <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">Limites</div>
             <ul className={`mt-3 space-y-2 ${BODY}`}>
               <li>Une seule année d’entraînement</li>
-              <li>Pas horaire : les nuages brefs échappent au modèle</li>
+              <li>Les nuages brefs échappent au pas horaire</li>
               <li>Coût mémoire de l’attention du TFT</li>
             </ul>
           </div>
-          <div className="border border-db-border/60 px-6 py-5">
+          <div>
             <div className="font-mono text-[12px] uppercase tracking-[0.25em] text-db-accent">Perspectives</div>
             <ul className={`mt-3 space-y-2 ${BODY}`}>
-              <li>Transfert vers un autre site solaire</li>
-              <li>Modèle dédié 1–6 h, pas de 5–15 min</li>
-              <li>Apprentissage fédéré, intégration pilote à la SENELEC</li>
+              <li>Transférer le pipeline vers un autre site solaire</li>
+              <li>Court terme, de 1 à 6 heures au pas de 5 à 15 minutes</li>
+              <li>Apprentissage fédéré, puis pilote à la SENELEC</li>
             </ul>
           </div>
         </div>
-        <p className="font-mono text-[12px] uppercase tracking-[0.3em] text-db-dim">Merci de votre attention</p>
+        <p className="text-center font-mono text-[12px] uppercase tracking-[0.3em] text-db-dim">
+          Merci de votre attention
+        </p>
       </Slide>
     ),
   },
-
-
 ]

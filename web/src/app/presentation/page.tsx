@@ -16,7 +16,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ACTES, SLIDES } from './deck'
+import { SLIDES, fr } from './deck'
 
 const TOTAL = SLIDES.length
 
@@ -164,7 +164,6 @@ export default function PresentationPage() {
   }, [toc])
 
   const slide = SLIDES[index]
-  const acte = ACTES.find((a) => a.id === slide.acte)
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
   const ss = String(elapsed % 60).padStart(2, '0')
   const progress = ((index + 1) / TOTAL) * 100
@@ -174,10 +173,13 @@ export default function PresentationPage() {
       {/* ── folio courant (haut) ── */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex h-12 items-center justify-between px-6 md:px-10">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-db-dim">
-          Deep Aero SN — Soutenance
+          Soutenance Deep Aero SN
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-db-dim">
-          {acte?.label} · {slide.section}
+        <span
+          title={slide.title}
+          className="max-w-[46vw] truncate font-mono text-[10px] uppercase tracking-[0.25em] text-db-dim"
+        >
+          {fr(slide.title)}
         </span>
       </header>
 
@@ -209,7 +211,7 @@ export default function PresentationPage() {
           return (
             <button
               key={s.id}
-              aria-label={`Planche ${k + 1} — ${s.title}`}
+              aria-label={`Planche ${k + 1} : ${s.title}`}
               aria-current={isActive ? 'step' : undefined}
               onClick={() => jump(k)}
               className={`w-px transition-all motion-reduce:transition-none ${
@@ -232,7 +234,7 @@ export default function PresentationPage() {
           </span>
         )}
         <span>
-          {String(index + 1).padStart(2, '0')} / {String(TOTAL).padStart(2, '0')}
+          {String(index + 1).padStart(2, '0')} sur {String(TOTAL).padStart(2, '0')}
         </span>
       </div>
 
@@ -240,11 +242,11 @@ export default function PresentationPage() {
       {notesOpen && (
         <aside
           role="dialog"
-          aria-label={`Notes — planche ${index + 1} : ${slide.title}`}
+          aria-label={`Notes, planche ${index + 1} : ${slide.title}`}
           className="absolute inset-x-0 bottom-6 z-30 mx-auto max-w-3xl border border-db-border border-l-2 border-l-db-accent bg-db-bg/95 px-6 py-4 backdrop-blur-sm"
         >
           <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-db-accent">
-            Notes — {String(index + 1).padStart(2, '0')} · {slide.title}
+            Notes, planche {String(index + 1).padStart(2, '0')} : {fr(slide.title)}
           </div>
           <p className="font-serif text-sm leading-relaxed text-db-muted">{slide.notes}</p>
         </aside>
@@ -269,55 +271,40 @@ export default function PresentationPage() {
                 onClick={() => setToc(false)}
                 className="font-mono text-[10px] uppercase tracking-widest text-db-muted hover:text-db-accent"
               >
-                fermer (échap)
+                échap pour fermer
               </button>
             </div>
             <p className="mt-2 font-serif italic text-sm text-db-muted">
-              vingt planches · quinze minutes
+              dix-huit planches, quinze minutes
             </p>
-            {ACTES.map((a) => {
-              const start = SLIDES.filter((s) => s.acte === a.id)
-              return (
-                <div key={a.id} className="mt-10">
-                  <div className="flex items-baseline justify-between border-b border-db-border pb-2">
-                    <span className="font-serif italic text-base text-db-text">
-                      {a.label} — {a.titre}
+            <div className="mt-8">
+              {SLIDES.map((s, k) => {
+                const isActive = k === index
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => jump(k)}
+                    aria-current={isActive ? 'step' : undefined}
+                    className="group flex w-full items-baseline gap-4 py-2.5 text-left"
+                  >
+                    <span className="w-7 shrink-0 font-mono text-[11px] text-db-dim tabular-nums">
+                      {String(k + 1).padStart(2, '0')}
                     </span>
-                    <span className="font-mono text-[10px] text-db-dim tabular-nums">{a.temps}</span>
-                  </div>
-                  {start.map((s) => {
-                    const k = SLIDES.indexOf(s)
-                    const isActive = k === index
-                    return (
-                      <button
-                        key={s.id}
-                        onClick={() => jump(k)}
-                        aria-current={isActive ? 'step' : undefined}
-                        className="group flex w-full items-baseline gap-4 py-2.5 text-left"
-                      >
-                        <span className="w-7 shrink-0 font-mono text-[11px] text-db-dim tabular-nums">
-                          {String(k + 1).padStart(2, '0')}
-                        </span>
-                        <span
-                          className={`font-serif text-[15px] group-hover:text-db-accent ${
-                            isActive ? 'text-db-accent' : 'text-db-text'
-                          }`}
-                        >
-                          {s.title}
-                        </span>
-                        <span
-                          aria-hidden
-                          className="mx-1 flex-1 -translate-y-1 border-b border-dotted border-db-dim/40"
-                        />
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-db-dim">
-                          {s.section}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              )
-            })}
+                    <span
+                      className={`font-serif text-[15px] group-hover:text-db-accent ${
+                        isActive ? 'text-db-accent' : 'text-db-text'
+                      }`}
+                    >
+                      {fr(s.title)}
+                    </span>
+                    <span
+                      aria-hidden
+                      className="mx-1 flex-1 -translate-y-1 border-b border-dotted border-db-dim/40"
+                    />
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}
